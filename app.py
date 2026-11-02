@@ -282,8 +282,8 @@ st.markdown("""
 
 GEMINI_MODELS = [
     "gemini-3.8-flash",
-    "gemini-3.5-flash-lite",
     "gemini-3.6-flash",
+    "gemini-3.5-flash-lite",
 ]
 
 GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models/{}:generateContent"
@@ -422,7 +422,8 @@ def chamar_gemini(prompt_texto):
     resumo_erros = "\n".join(f"- {erro}" for erro in erros)
     return (
         "❌ **Não foi possível obter resposta de nenhum dos modelos "
-        "configurados.**\n\n"
+        "configurados devido a congestionamento (Alta Demanda).**\n\n"
+        "Aguarde alguns segundos e tente novamente.\n\n"
         f"{resumo_erros}"
     )
 
@@ -566,7 +567,7 @@ with tab1:
 
 
 # =========================================================
-# ABA 2: TRANSCRIÇÃO AUTOMÁTICA DE VÍDEO
+# ABA 2: TRANSCRIÇÃO AUTOMÁTICA DE VÍDEO (COM RESILIÊNCIA A 503)
 # =========================================================
 with tab2:
     st.subheader("Transcrição de Vídeo por IA")
@@ -600,13 +601,30 @@ with tab2:
                         time.sleep(2)
                         video_ref = client.files.get(name=video_ref.name)
                     
-                    response_transcricao = client.models.generate_content(
-                        model='gemini-3.8-flash',
-                        contents=[
-                            video_ref,
-                            "Faça a transcrição palavra por palavra, exata e completa de tudo o que é falado neste vídeo."
-                        ]
-                    )
+                    # Tenta os modelos em loop caso o primeiro esteja com alta demanda (503)
+                    response_transcricao = None
+                    ultimo_erro = None
+                    
+                    for modelo_transcr in GEMINI_MODELS:
+                        try:
+                            response_transcricao = client.models.generate_content(
+                                model=modelo_transcr,
+                                contents=[
+                                    video_ref,
+                                    "Faça a transcrição palavra por palavra, exata e completa de tudo o que é falado neste vídeo."
+                                ]
+                            )
+                            if response_transcricao and response_transcricao.text:
+                                break
+                        except Exception as e:
+                            ultimo_erro = e
+                            time.sleep(1)
+                            continue
+                    
+                    if not response_transcricao or not response_transcricao.text:
+                        raise Exception(
+                            f"Todos os modelos retornaram erro de alta demanda. Detalhe: {ultimo_erro}"
+                        )
                     
                     texto_transcrito = response_transcricao.text
                     
