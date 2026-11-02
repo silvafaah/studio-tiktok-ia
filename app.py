@@ -103,7 +103,7 @@ st.markdown("""
 
     /* Abas */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 12px;
+        gap: 8px;
         border-bottom: 2px solid #F0D4CB;
     }
 
@@ -111,9 +111,9 @@ st.markdown("""
         background: #FCE6DF !important;
         color: #A3482D !important;
         border-radius: 12px 12px 0 0;
-        padding: 12px 20px;
+        padding: 10px 16px;
         border: 1px solid #E6BDB2;
-        font-size: 1.08rem !important;
+        font-size: 0.98rem !important;
         font-weight: 600 !important;
     }
 
@@ -272,19 +272,18 @@ st.markdown("""
         h1 { font-size: 2rem !important; }
 
         .stTabs [data-baseweb="tab"] {
-            padding: 10px 12px;
-            font-size: 1rem !important;
+            padding: 8px 10px;
+            font-size: 0.9rem !important;
         }
     }
 </style>
 """, unsafe_allow_html=True)
 
 
-# O Flash-Lite é otimizado para tarefas rápidas e de alto volume.
 GEMINI_MODELS = [
+    "gemini-2.5-flash",
     "gemini-3.5-flash-lite",
     "gemini-3.6-flash",
-    "gemini-3.8-flash",
 ]
 
 GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models/{}:generateContent"
@@ -305,7 +304,7 @@ if not API_KEY:
 
 
 # =========================================================
-# FUNÇÃO PARA CHAMAR A API GEMINI COM MODELO ALTERNATIVO
+# FUNÇÃO PARA CHAMAR A API GEMINI (TEXTO)
 # =========================================================
 def chamar_gemini(prompt_texto):
     if not API_KEY:
@@ -378,12 +377,6 @@ def chamar_gemini(prompt_texto):
                     if not texto:
                         return "⚠️ O Gemini respondeu, mas não retornou texto."
 
-                    if modelo != GEMINI_MODELS[0]:
-                        return (
-                            f"ℹ️ *Modelo alternativo utilizado: {modelo}*\n\n"
-                            f"{texto}"
-                        )
-
                     return texto
 
                 except (ValueError, KeyError, IndexError, TypeError):
@@ -430,11 +423,7 @@ def chamar_gemini(prompt_texto):
     return (
         "❌ **Não foi possível obter resposta de nenhum dos modelos "
         "configurados.**\n\n"
-        "O aplicativo tentou os modelos alternativos, mas a API continuou "
-        "indisponível ou recusou as solicitações.\n\n"
-        f"{resumo_erros}\n\n"
-        "Aguarde alguns minutos e tente novamente. Se persistir, confira "
-        "o uso e os limites da sua chave no Google AI Studio."
+        f"{resumo_erros}"
     )
 
 
@@ -464,18 +453,19 @@ st.markdown(
 )
 st.markdown(
     "<p style='text-align: center; color: gray;'>"
-    "Central de Inteligência para criação e engenharia reversa "
+    "Central de Inteligência para criação, transcrição e engenharia reversa "
     "de roteiros para o TikTok Shop."
     "</p>",
     unsafe_allow_html=True
 )
 
 # =========================================================
-# ABAS
+# ABAS DO APLICATIVO
 # =========================================================
-tab1, tab2 = st.tabs([
-    "🎯 Gerar Roteiro do Zero",
-    "⚡ Engenharia Reversa (Hooks)"
+tab1, tab2, tab3 = st.tabs([
+    "🎯 Gerar Roteiro",
+    "🎙️ Transcrever Vídeo",
+    "⚡ Engenharia Reversa"
 ])
 
 # =========================================================
@@ -485,7 +475,7 @@ with tab1:
     st.subheader("Criar Roteiro Persuasivo para Vendas")
     st.markdown(
         "Preencha os dados abaixo para gerar um roteiro otimizado "
-        "para o TikTok Shop."
+        "em tabela estruturada para o TikTok Shop."
     )
 
     produto = st.text_input(
@@ -544,7 +534,7 @@ with tab1:
                 system_instruction = (
                     "Você é um especialista em criação de roteiros curtos "
                     "para vídeos de produtos. Desenvolva um roteiro dinâmico com duração total de 30 a 60 segundos. "
-                    "IMPORTANTE: Apresente o roteiro em formato de tabela Markdown (ou lista clara) contendo DUAS colunas principais: 'Tempo / Bloco' (ex: 00s - 05s) e 'Texto Falado' (a locução/fala direta para a câmera). "
+                    "IMPORTANTE: Apresente o roteiro em formato de tabela Markdown contendo DUAS colunas principais: 'Tempo / Bloco' (ex: 00s - 05s) e 'Texto Falado' (a locução/fala direta para a câmera). "
                     "NÃO inclua nenhuma descrição de cenas, diretrizes visuais ou ações. Apenas o tempo na primeira coluna e o texto falado correspondente na segunda coluna."
                 )
 
@@ -576,18 +566,87 @@ with tab1:
 
 
 # =========================================================
-# ABA 2: ENGENHARIA REVERSA DE HOOKS
+# ABA 2: TRANSCRIÇÃO AUTOMÁTICA DE VÍDEO (NOVO!)
 # =========================================================
 with tab2:
+    st.subheader("Transcrição de Vídeo por IA")
+    st.markdown(
+        "Envie o arquivo de vídeo baixado (ex: do TikTok) para extrair "
+        "automaticamente a transcrição completa e utilizá-la na engenharia reversa."
+    )
+
+    video_arquivo = st.file_uploader(
+        "Selecione o arquivo de vídeo (.mp4, .mov, .webm):",
+        type=["mp4", "mov", "avi", "mkv", "webm"]
+    )
+
+    if video_arquivo is not None:
+        st.video(video_arquivo)
+        
+        if st.button("🎙️ Extrair Transcrição do Vídeo", use_container_width=True):
+            with st.spinner("Enviando arquivo e extraindo a transcrição com IA..."):
+                try:
+                    # Usando a Google GenAI Files API oficial para upload do arquivo em memória
+                    from google import genai
+                    
+                    client = genai.Client(api_key=API_KEY)
+                    
+                    # Salva temporariamente no ambiente de execução do Streamlit
+                    temp_path = "temp_uploaded_video.mp4"
+                    with open(temp_path, "wb") as f:
+                        f.write(video_arquivo.getbuffer())
+                    
+                    # Upload para a API do Gemini
+                    video_ref = client.files.upload(file=temp_path)
+                    
+                    # Aguarda o processamento do arquivo de mídia
+                    while video_ref.state.name == "PROCESSING":
+                        time.sleep(2)
+                        video_ref = client.files.get(name=video_ref.name)
+                    
+                    # Solicita a transcrição ao Gemini Flash
+                    response_transcricao = client.models.generate_content(
+                        model='gemini-2.5-flash',
+                        contents=[
+                            video_ref,
+                            "Faça a transcrição palavra por palavra, exata e completa de tudo o que é falado neste vídeo."
+                        ]
+                    )
+                    
+                    texto_transcrito = response_transcricao.text
+                    
+                    st.success("Transcrição concluída com sucesso!")
+                    st.text_area(
+                        "Texto Transcrito (copie para usar na Engenharia Reversa):",
+                        value=texto_transcrito,
+                        height=250
+                    )
+                    
+                    st.download_button(
+                        label="📄 Baixar transcrição em TXT",
+                        data=texto_transcrito,
+                        file_name="transcricao_video.txt",
+                        mime="text/plain",
+                        use_container_width=True
+                    )
+
+                except Exception as e:
+                    st.error(f"Erro ao processar o vídeo: {e}")
+
+
+# =========================================================
+# ABA 3: ENGENHARIA REVERSA DE HOOKS
+# =========================================================
+with tab3:
     st.subheader("Engenharia Reversa de Vídeos em Alta")
     st.markdown(
-        "Cole a transcrição ou a ideia de um vídeo para analisar sua "
-        "estrutura e criar uma versão inédita adaptada ao seu produto."
+        "Cole a transcrição (ou o texto extraído na aba anterior) para analisar "
+        "a estrutura e criar uma versão inédita adaptada ao seu produto."
     )
 
     video_viral_texto = st.text_area(
         "Transcrição ou Ideia do Vídeo de Referência:",
-        placeholder="Cole aqui o que é dito no vídeo que deseja analisar..."
+        placeholder="Cole aqui o que foi dito no vídeo que deseja analisar..."
     )
 
     produto_usuario_rv = st.text_input(
@@ -603,18 +662,18 @@ with tab2:
     if remodelar:
         if not video_viral_texto.strip() or not produto_usuario_rv.strip():
             st.warning(
-                "Por favor, preencha a transcrição ou ideia do vídeo "
-                "e informe seu produto."
+                "Por favor, preencha a transcrição do vídeo "
+                "e informe o seu produto."
             )
         else:
             with st.spinner(
-                "Analisando o gancho e a estrutura do vídeo..."
+                "Analisando o gancho e estruturando o novo roteiro..."
             ):
                 system_instruction_rv = (
                     "Você é um especialista em análise de roteiros e "
                     "copywriting. Analise o gancho, a estrutura narrativa, "
                     "o ritmo e os recursos de persuasão do texto fornecido. "
-                    "Crie uma versão original adaptada para o novo produto mantendo o timing ideal de 30 a 60 segundos. "
+                    "Crie uma versão original em tabela adaptada para o novo produto mantendo o timing ideal de 30 a 60 segundos. "
                     "IMPORTANTE: Apresente o roteiro final em formato de tabela Markdown com as colunas 'Tempo / Bloco' e 'Texto Falado', contendo apenas a locução/fala sem nenhuma descrição de cenas."
                 )
 
@@ -628,7 +687,7 @@ with tab2:
                 resultado_rv = chamar_gemini(prompt_rv_completo)
 
                 st.markdown("---")
-                st.subheader("🚀 Novo Roteiro:")
+                st.subheader("🚀 Novo Roteiro em Tabela:")
                 st.markdown(resultado_rv)
 
                 if not resultado_rv.startswith(("❌", "⚠️", "🔑", "🌐")):
