@@ -84,7 +84,7 @@ with aba1:
                     )
 
                     model = genai.GenerativeModel(
-                        model_name='gemini-1.5-flash',
+                        model_name='gemini-1.5-pro',
                         system_instruction=system_instruction
                     )
                     
@@ -125,7 +125,7 @@ with aba2:
                     )
 
                     model = genai.GenerativeModel(
-                        model = genai.GenerativeModel('gemini-2.5-flash',
+                        model_name='gemini-1.5-pro',
                         system_instruction=system_instruction
                     )
                     
