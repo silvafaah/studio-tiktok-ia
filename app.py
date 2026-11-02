@@ -1,11 +1,5 @@
-# coding: utf-8
-import sys
-import io
 import streamlit as st
 from google import genai
-
-# Força o ambiente a aceitar UTF-8 para evitar erros de acentuação
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 # Configuração da página
 st.set_page_config(
@@ -52,14 +46,14 @@ if prompt_usuario := st.chat_input("Digite o nome do produto e o que ele resolve
                     client = genai.Client(api_key=api_key)
                     
                     system_prompt = (
-                        "Voce e um especialista em marketing digital e vendas no TikTok Shop. "
-                        "Sempre que o usuario enviar um produto ou ideia, crie um roteiro de video curto "
-                        "altamente persuasivo contendo: 1) Tres opcoes de ganchos virais para os primeiros 3 segundos; "
-                        "2) O desenvolvimento rapido e dinamico focado em conversao; "
-                        "3) Uma legenda criativa com chamada para acao (CTA) e hashtags virais."
+                        "Você é um especialista em marketing digital e vendas no TikTok Shop. "
+                        "Sempre que o usuário enviar um produto ou ideia, crie um roteiro de vídeo curto "
+                        "altamente persuasivo contendo: 1) Três opções de ganchos virais para os primeiros 3 segundos; "
+                        "2) O desenvolvimento rápido e dinâmico focado em conversão; "
+                        "3) Uma legenda criativa com chamada para ação (CTA) e hashtags virais."
                     )
                     
-                    conteudo_completo = f"{system_prompt}\n\nSolicitacao: {prompt_usuario}"
+                    conteudo_completo = f"{system_prompt}\n\nSolicitação: {prompt_usuario}"
                     
                     response = client.models.generate_content(
                         model='gemini-1.5-flash',
