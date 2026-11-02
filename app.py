@@ -1,84 +1,73 @@
-import os
 import streamlit as st
 from google import genai
 
-# Configuração da página do Streamlit
+# Configuração da página
 st.set_page_config(
-    page_title="Studio TikTok Shop IA",
+    page_title="Studio TikTok Shop IA - Chat",
     page_icon="🎬",
     layout="centered"
 )
 
-st.title("🎬 Studio TikTok Shop IA")
-st.subheader("Gerador de Roteiros e Legendas Virais")
+st.title("🎬 Studio TikTok Shop IA (Chat)")
+st.caption("Converse com a IA para criar roteiros virais e legendas instantâneas para o TikTok Shop.")
 
-# Barra lateral para configuração da API Key
+# Barra lateral para inserir a Chave da API
 with st.sidebar:
     st.header("⚙️ Configurações")
+    api_key = st.text_input("Gemini API Key:", type="password", help="Insira a sua chave do Google AI Studio.")
+    st.markdown("---")
+    st.markdown("💡 **Dica:** Adicione este app à tela inicial do seu telemóvel para um acesso rápido!")
+
+# Inicializa o histórico de mensagens no estado da sessão do Streamlit
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+# Exibe as mensagens anteriores do chat na tela
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
+
+# Entrada de texto do chat (na parte inferior da tela)
+if prompt_usuario := st.chat_input("Digite o nome do produto e o que ele resolve..."):
     
-    api_key_env = ""
-    try:
-        api_key_env = st.secrets.get("GEMINI_API_KEY", "")
-    except Exception:
-        pass
-
-    api_key = st.text_input("Gemini API Key:", value=api_key_env, type="password")
-    st.info("Insira sua chave do Google AI Studio para ativar a IA.")
-
-# Formulário principal
-st.markdown("---")
-produto = st.text_input("📦 Nome do Produto / Item", placeholder="Ex: Mini Processador Elétrico de Alimentos")
-nicho = st.selectbox("📌 Categoria / Nicho", ["Beleza & Maquiagem", "Cozinha & Casa", "Moda & Acessórios", "Tecnologia & Gadgets", "Fitness & Saúde"])
-dor_ou_desejo = st.text_area("💡 Qual o principal benefício ou problema que ele resolve?", placeholder="Ex: Tritura alho e cebola em 5 segundos sem deixar cheiro nas mãos e sem sujeira.")
-
-# Botão de geração
-if st.button("🚀 Gerar Roteiro & Legenda", use_container_width=True):
     if not api_key:
-        st.error("Por favor, insira a Gemini API Key!")
-    elif not produto:
-        st.warning("Preencha o nome do produto!")
+        st.error("Por favor, insira a sua Gemini API Key na barra lateral antes de continuar.")
     else:
-        with st.spinner("O Gemini está criando um roteiro de alta conversão..."):
-            try:
-                # Inicializa o cliente oficial da biblioteca google-genai
-                client = genai.Client(api_key=api_key)
+        # Adiciona a mensagem do usuário ao histórico
+        st.session_state.messages.append({"role": "user", "content": prompt_usuario})
+        with st.chat_message("user"):
+            st.markdown(prompt_usuario)
 
-                prompt = f"""
-                Você é um estrategista de conteúdo expert em TikTok Shop no Brasil, especializado em criar vídeos virais de alta retenção e vendas por impulso.
-
-                Crie um roteiro completo de vídeo curto (45 a 60 segundos) para o produto abaixo:
-                - Produto: {produto}
-                - Categoria: {nicho}
-                - Benefício / Dor do cliente: {dor_ou_desejo}
-
-                Siga ESTRITAMENTE este formato de resposta em Markdown legível:
-
-                ### 🎯 OPÇÕES DE GANCHOS (Primeiros 3 segundos - Escolha 1)
-                - Opção 1 (Visual/Choque): [Texto]
-                - Opção 2 (Pergunta/Curiosidade): [Texto]
-                - Opção 3 (Dor Direta): [Texto]
-
-                ---
-                ### 📜 ROTEIRO PASSO A PASSO (45-60s)
-                * **[00:00 - 00:05] Gancho:** (Fala e indicação de cena)
-                * **[00:05 - 00:15] O Problema:** (Mostrar a dor de forma natural)
-                * **[00:15 - 00:35] A Solução / Demonstração:** (Mostrar o produto em ação e o benefício)
-                * **[00:35 - 00:45] Chamada para Ação (CTA):** (Apontando para o carrinho laranja do TikTok Shop)
-
-                ---
-                ### 📝 LEGENDA PRONTA PARA O TIKTOK
-                [Escreva uma legenda persuasiva e curta com emojis + 5 hashtags estratégicas em alta para esse nicho no Brasil]
-                """
-
-                # Chamada para o modelo rápido e eficiente do Gemini
-                response = client.models.generate_content(
-                    model='gemini-3.8-flash',
-                    contents=prompt
-                )
-
-                st.success("Roteiro gerado com sucesso!")
-                st.markdown("---")
-                st.markdown(response.text)
-
-            except Exception as e:
-                st.error(f"Erro ao conectar com a API do Gemini: {e}")
+        # Gera a resposta da IA
+        with st.chat_message("assistant"):
+            with st.spinner("A criar roteiro e legendas virais..."):
+                try:
+                    # Configura o cliente do Gemini com a chave fornecida
+                    client = genai.Client(api_key=api_key)
+                    
+                    # Instrução de sistema embutida para guiar a IA como especialista em marketing
+                    system_prompt = (
+                        "Você é um especialista em marketing digital e vendas no TikTok Shop. "
+                        "Sempre que o usuário enviar um produto ou ideia, crie um roteiro de vídeo curto "
+                        "altamente persuasivo contendo: 1) Três opções de ganchos virais para os primeiros 3 segundos; "
+                        "2) O desenvolvimento rápido e dinâmico focado em conversão; "
+                        "3) Uma legenda criativa com chamada para ação (CTA) e hashtags virais."
+                    )
+                    
+                    # Monta o contexto combinando as regras com a mensagem atual do usuário
+                    conteudo_completo = f"{system_prompt}\n\nSolicitação do usuário: {prompt_usuario}"
+                    
+                    response = client.models.generate_content(
+                        model='gemini-1.5-flash',
+                        contents=conteudo_completo,
+                    )
+                    
+                    resposta_ia = response.text
+                    st.markdown(resposta_ia)
+                    
+                    # Adiciona a resposta da IA ao histórico
+                    st.session_state.messages.append({"role": "assistant", "content": resposta_ia})
+                    
+                except Exception as e:
+                    erro_msg = f"Ocorreu um erro ao comunicar com a API do Gemini: {e}"
+                    st.error(erro_msg)
