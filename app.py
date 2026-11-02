@@ -18,8 +18,9 @@ else:
 st.markdown("<h1 style='text-align: center;'>🎬 Studio TikTok Shop IA</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center; color: gray;'>Central de Inteligência para criação e engenharia reversa de roteiros virais para o TikTok Shop.</p>", unsafe_allow_html=True)
 
-# Função para chamar a API diretamente via HTTP (evita qualquer erro de SDK ou modelo)
+# Função para chamar a API diretamente via HTTP REST
 def chamar_gemini(prompt_texto):
+    # Utilizando o modelo estável atual na v1beta
     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={API_KEY}"
     
     headers = {
