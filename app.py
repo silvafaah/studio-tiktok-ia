@@ -15,19 +15,19 @@ st.set_page_config(
 
 
 # =========================================================
-# IDENTIDADE VISUAL: LAVANDA + ROSA-PÊSSEGO
+# IDENTIDADE VISUAL: ESMERALDA PROFUNDO + DOURADO & COBRE
 # =========================================================
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
     :root {
-        --lavanda: #8B72C8;
-        --lavanda-escuro: #7056AD;
-        --rosa: #F3A6B8;
-        --fundo: #FFF9FC;
-        --texto: #40364D;
-        --texto-suave: #746A7D;
+        --primaria: #0F5132;
+        --primaria-hover: #146c43;
+        --destaque: #D9A036;
+        --fundo: #F4F9F6;
+        --texto: #1F2D24;
+        --texto-suave: #5C6B62;
     }
 
     html, body, [class*="css"], button, input, textarea {
@@ -40,42 +40,42 @@ st.markdown("""
 
     .stApp {
         background:
-            radial-gradient(ellipse at 8% 0%, rgba(243,166,184,.18), transparent 34%),
-            radial-gradient(ellipse at 95% 12%, rgba(168,216,197,.20), transparent 32%),
+            radial-gradient(ellipse at 8% 0%, rgba(217,160,54,.12), transparent 35%),
+            radial-gradient(ellipse at 95% 12%, rgba(15,81,50,.08), transparent 35%),
             var(--fundo) !important;
         color: var(--texto) !important;
         font-size: 16px !important;
     }
 
     [data-testid="stHeader"] {
-        background: rgba(255,249,252,.94) !important;
+        background: rgba(244,249,246,.94) !important;
     }
 
     [data-testid="stAppViewContainer"] > .main {
         background: transparent !important;
     }
 
-    /* Tipografia: maior, moderna e confortável */
+    /* Tipografia */
     h1, h2, h3, h4, p, label, .stMarkdown, [data-testid="stWidgetLabel"] {
         font-family: 'Inter', 'Segoe UI', Arial, sans-serif !important;
         color: var(--texto);
     }
 
     h1 {
-        color: #7056AD !important;
+        color: #0F5132 !important;
         font-size: 2.25rem !important;
         font-weight: 800 !important;
         letter-spacing: -1px;
     }
 
     h2 {
-        color: #795FAF !important;
+        color: #146c43 !important;
         font-size: 1.65rem !important;
         font-weight: 700 !important;
     }
 
     h3 {
-        color: #795FAF !important;
+        color: #146c43 !important;
         font-size: 1.3rem !important;
         font-weight: 700 !important;
     }
@@ -88,7 +88,7 @@ st.markdown("""
     [data-testid="stWidgetLabel"] p,
     [data-testid="stWidgetLabel"] label,
     .stTextInput label, .stTextArea label, .stSelectbox label {
-        color: #51445F !important;
+        color: #2D4034 !important;
         font-size: 1rem !important;
         font-weight: 650 !important;
     }
@@ -100,36 +100,36 @@ st.markdown("""
 
     /* Abas */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 10px;
-        border-bottom: 2px solid #E9DFF4;
+        gap: 12px;
+        border-bottom: 2px solid #D8E7DE;
     }
 
     .stTabs [data-baseweb="tab"] {
-        background: #F3ECFA !important;
-        color: #695783 !important;
+        background: #E2EFE7 !important;
+        color: #2D5A42 !important;
         border-radius: 12px 12px 0 0;
-        padding: 12px 19px;
-        border: 1px solid #E6D9F2;
+        padding: 12px 20px;
+        border: 1px solid #C5E1D1;
         font-size: .98rem !important;
         font-weight: 600 !important;
     }
 
     .stTabs [aria-selected="true"] {
-        background: #E9DDF8 !important;
-        color: #62499B !important;
-        border-bottom: 3px solid #8B72C8 !important;
+        background: #0F5132 !important;
+        color: #FFFFFF !important;
+        border-bottom: 3px solid #D9A036 !important;
         font-weight: 750 !important;
     }
 
-    /* Campos: força fundo branco e texto escuro em todos os elementos internos */
+    /* Campos de Entrada */
     [data-testid="stTextInput"] input,
     [data-testid="stTextArea"] textarea,
     div[data-baseweb="input"] input,
     div[data-baseweb="textarea"] textarea {
         background: #FFFFFF !important;
-        color: #40364D !important;
-        -webkit-text-fill-color: #40364D !important;
-        caret-color: #7056AD !important;
+        color: #1F2D24 !important;
+        -webkit-text-fill-color: #1F2D24 !important;
+        caret-color: #0F5132 !important;
         font-family: 'Inter', 'Segoe UI', Arial, sans-serif !important;
         font-size: 1rem !important;
         font-weight: 500 !important;
@@ -142,26 +142,26 @@ st.markdown("""
     div[data-baseweb="input"] > div,
     div[data-baseweb="textarea"] > div {
         background: #FFFFFF !important;
-        border: 1px solid #E5D9EF !important;
+        border: 1px solid #C5E1D1 !important;
         border-radius: 11px !important;
-        box-shadow: 0 2px 8px rgba(112,86,173,.06) !important;
+        box-shadow: 0 2px 8px rgba(15,81,50,.06) !important;
     }
 
-    /* Select: texto, fundo, menu e opções */
+    /* Select */
     [data-testid="stSelectbox"] [data-baseweb="select"] > div,
     div[data-baseweb="select"] > div {
         background: #FFFFFF !important;
-        color: #40364D !important;
-        border: 1px solid #E5D9EF !important;
+        color: #1F2D24 !important;
+        border: 1px solid #C5E1D1 !important;
         border-radius: 11px !important;
         min-height: 44px;
-        box-shadow: 0 2px 8px rgba(112,86,173,.06) !important;
+        box-shadow: 0 2px 8px rgba(15,81,50,.06) !important;
     }
 
     [data-testid="stSelectbox"] [data-baseweb="select"] *,
     div[data-baseweb="select"] * {
-        color: #40364D !important;
-        -webkit-text-fill-color: #40364D !important;
+        color: #1F2D24 !important;
+        -webkit-text-fill-color: #1F2D24 !important;
         font-family: 'Inter', 'Segoe UI', Arial, sans-serif !important;
         font-size: 1rem !important;
     }
@@ -171,78 +171,78 @@ st.markdown("""
     [role="listbox"],
     [role="option"] {
         background: #FFFFFF !important;
-        color: #40364D !important;
+        color: #1F2D24 !important;
         font-family: 'Inter', 'Segoe UI', Arial, sans-serif !important;
         font-size: .98rem !important;
     }
 
     [role="option"]:hover {
-        background: #F3ECFA !important;
+        background: #E2EFE7 !important;
     }
 
     input::placeholder, textarea::placeholder {
-        color: #9A8FA4 !important;
-        -webkit-text-fill-color: #9A8FA4 !important;
+        color: #8A9A90 !important;
+        -webkit-text-fill-color: #8A9A90 !important;
         opacity: 1 !important;
     }
 
     [data-testid="stTextInput"] input:focus,
     [data-testid="stTextArea"] textarea:focus {
         background: #FFFFFF !important;
-        color: #40364D !important;
+        color: #1F2D24 !important;
     }
 
     [data-testid="stTextInput"] [data-baseweb="input"]:focus-within,
     [data-testid="stTextArea"] [data-baseweb="textarea"]:focus-within,
     [data-testid="stSelectbox"] [data-baseweb="select"]:focus-within {
-        border-color: #A58BD8 !important;
-        box-shadow: 0 0 0 2px rgba(139,114,200,.15) !important;
+        border-color: #0F5132 !important;
+        box-shadow: 0 0 0 2px rgba(15,81,50,.15) !important;
     }
 
     /* Botões */
     .stButton > button,
     .stDownloadButton > button {
         border-radius: 12px;
-        border: 1px solid #8B72C8;
-        background: linear-gradient(100deg, #8B72C8, #A68BD8);
+        border: 1px solid #0F5132;
+        background: linear-gradient(100deg, #0F5132, #198754);
         color: #FFFFFF !important;
         font-family: 'Inter', 'Segoe UI', Arial, sans-serif !important;
         font-size: .98rem !important;
         font-weight: 700 !important;
         min-height: 46px;
-        box-shadow: 0 4px 10px rgba(112,86,173,.14);
+        box-shadow: 0 4px 12px rgba(15,81,50,.18);
         transition: transform .15s ease, box-shadow .15s ease;
     }
 
     .stButton > button:hover,
     .stDownloadButton > button:hover {
-        border-color: #7056AD;
-        background: linear-gradient(100deg, #7056AD, #9276C9);
+        border-color: #146c43;
+        background: linear-gradient(100deg, #146c43, #218838);
         color: #FFFFFF !important;
-        box-shadow: 0 6px 14px rgba(112,86,173,.20);
+        box-shadow: 0 6px 16px rgba(15,81,50,.25);
         transform: translateY(-1px);
     }
 
     .stButton > button:focus,
     .stDownloadButton > button:focus {
-        box-shadow: 0 0 0 3px rgba(243,166,184,.35) !important;
+        box-shadow: 0 0 0 3px rgba(217,160,54,.35) !important;
     }
 
-    /* Cartões e mensagens */
+    /* Cartões e Alertas */
     [data-testid="stAlert"] {
         border-radius: 12px;
-        border: 1px solid #E9DDF4;
+        border: 1px solid #D8E7DE;
         background: #FFFFFF !important;
     }
 
     [data-testid="stVerticalBlockBorderWrapper"] {
-        border-color: #E9DFF4;
+        border-color: #D8E7DE;
         border-radius: 14px;
-        background: rgba(255,255,255,.62);
+        background: rgba(255,255,255,.75);
     }
 
     hr {
-        border-color: #E9DFF4;
+        border-color: #D8E7DE;
     }
 
     .block-container {
@@ -261,7 +261,7 @@ st.markdown("""
         h1 { font-size: 1.8rem !important; }
 
         .stTabs [data-baseweb="tab"] {
-            padding: 10px 11px;
+            padding: 10px 12px;
             font-size: .9rem !important;
         }
     }
@@ -270,7 +270,6 @@ st.markdown("""
 
 
 # O Flash-Lite é otimizado para tarefas rápidas e de alto volume.
-# Se estiver indisponível, o aplicativo tenta os modelos seguintes.
 GEMINI_MODELS = [
     "gemini-3.5-flash-lite",
     "gemini-3.6-flash",
@@ -322,7 +321,6 @@ def chamar_gemini(prompt_texto):
     for modelo in GEMINI_MODELS:
         url = GEMINI_API_BASE.format(modelo)
 
-        # Duas tentativas no modelo atual antes de passar ao próximo.
         for tentativa in range(2):
             try:
                 response = requests.post(
@@ -405,9 +403,6 @@ def chamar_gemini(prompt_texto):
                     f"Detalhe: {detalhe}"
                 )
 
-            # 404: modelo não disponível para a chave.
-            # 429/5xx: limite temporário ou instabilidade; tenta novamente
-            # uma vez e depois passa ao próximo modelo.
             if status in (404, 429, 500, 502, 503, 504):
                 erros.append(f"{modelo}: HTTP {status} - {detalhe}")
                 if tentativa == 0 and status != 404:
@@ -430,8 +425,6 @@ def chamar_gemini(prompt_texto):
         "Aguarde alguns minutos e tente novamente. Se persistir, confira "
         "o uso e os limites da sua chave no Google AI Studio."
     )
-
-
 
 
 # =========================================================
@@ -558,8 +551,8 @@ with tab1:
                     f"- Benefício principal: {beneficio}\n"
                     f"- Público-alvo: {publico or 'Não especificado'}\n"
                     f"- Tom de voz: {tom}\n\n"
-                    "Entregue os três ganchos, indique o mais forte e "
-                    "apresente o roteiro com falas sugeridas e cenas."
+                    f"Entregue os três ganchos, indique o mais forte e "
+                    f"apresente o roteiro com falas sugeridas e cenas."
                 )
 
                 resultado = chamar_gemini(prompt_completo)
@@ -629,10 +622,10 @@ with tab2:
                     f"{system_instruction_rv}\n\n"
                     f"Texto de referência:\n{video_viral_texto}\n\n"
                     f"Produto para adaptar:\n{produto_usuario_rv}\n\n"
-                    "Entregue: análise breve do gancho e da estrutura, "
-                    "três opções de novos ganchos, indique o mais forte "
-                    "e crie um roteiro original com cenas e chamada "
-                    "para ação."
+                    f"Entregue: análise breve do gancho e da estrutura, "
+                    f"três opções de novos ganchos, indique o mais forte "
+                    f"e crie um roteiro original com cenas e chamada "
+                    f"para ação."
                 )
 
                 resultado_rv = chamar_gemini(prompt_rv_completo)
