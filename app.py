@@ -21,7 +21,7 @@ st.markdown("<p style='text-align: center; color: gray;'>Central de Inteligênci
 # Função para chamar a API diretamente via HTTP REST
 def chamar_gemini(prompt_texto):
     # Utilizando o modelo estável atual na v1beta
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={API_KEY}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={API_KEY}"
     
     headers = {
         'Content-Type': 'application/json'
