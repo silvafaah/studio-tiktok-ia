@@ -356,7 +356,7 @@ if not API_KEY:
 
 
 # =========================================================
-# FUNÇÃO PARA CHAMAR A API GEMINI COM AMPULHETA GIRANDO
+# FUNÇÃO PARA CHAMAR A API GEMINI COM TOKENS AMPLIADOS (4096)
 # =========================================================
 def chamar_gemini_com_loading(prompt_texto, mensagem_status="A inteligência artificial está trabalhando..."):
     if not API_KEY:
@@ -380,7 +380,7 @@ def chamar_gemini_com_loading(prompt_texto, mensagem_status="A inteligência art
         ],
         "generationConfig": {
             "temperature": 0.8,
-            "maxOutputTokens": 2048
+            "maxOutputTokens": 4096  # <--- Dobrado para evitar corte nos roteiros longos
         }
     }
 
@@ -631,7 +631,7 @@ with tab1:
 
 
 # =========================================================
-# ABA 2: TRANSCRIÇÃO AUTOMÁTICA DE VÍDEO (OTIMIZADA E RÁPIDA)
+# ABA 2: TRANSCRIÇÃO AUTOMÁTICA DE VÍDEO
 # =========================================================
 with tab2:
     st.subheader("Transcrição de Vídeo por IA")
@@ -653,7 +653,7 @@ with tab2:
         if st.button("🎙️ Extrair Transcrição do Vídeo", use_container_width=True):
             status_transcr = st.empty()
             status_transcr.markdown(
-                '<div class="loading-container"><span class="ampulheta-loading">⏳</span> Otimizando e extraindo transcrição com IA...</div>',
+                '<div class="loading-container"><span class="ampulheta-loading">⏳</span> Enviando vídeo e extraindo a transcrição com IA...</div>',
                 unsafe_allow_html=True
             )
             try:
@@ -665,15 +665,10 @@ with tab2:
                 with open(temp_path, "wb") as f:
                     f.write(video_arquivo.getbuffer())
                 
-                # Upload otimizado utilizando o SDK moderno do genai
                 video_ref = client.files.upload(file=temp_path)
                 
-                # Otimização: Verificação rápida sem travar o loop
-                tempo_inicio = time.time()
                 while video_ref.state.name == "PROCESSING":
-                    if time.time() - tempo_inicio > 45: # Timeout de segurança de 45s
-                        break
-                    time.sleep(1) # Checagem mais rápida a cada 1 segundo
+                    time.sleep(1)
                     video_ref = client.files.get(name=video_ref.name)
                 
                 response_transcricao = None
@@ -685,7 +680,7 @@ with tab2:
                             model=modelo_transcr,
                             contents=[
                                 video_ref,
-                                "Faça a transcrição palavra por palavra, exata e completa de tudo o que é falado neste vídeo, incluindo as marcações de tempo correspondentes."
+                                "Faça a transcrição palavra por palavra, exata e completa de tudo o que é falado neste vídeo."
                             ]
                         )
                         if response_transcricao and response_transcricao.text:
