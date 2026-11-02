@@ -93,7 +93,7 @@ st.markdown("""
     .stTextInput label, .stTextArea label, .stSelectbox label {
         color: #4A3538 !important;
         font-size: 1.12rem !important;
-        font-weight: 700 !important;
+        font-weight: 750 !important;
     }
 
     [data-testid="stCaptionContainer"] {
@@ -155,6 +155,27 @@ st.markdown("""
         border: 1px solid #E6BDB2 !important;
         border-radius: 11px !important;
         box-shadow: 0 2px 8px rgba(224,122,95,.08) !important;
+    }
+
+    /* BOTÃO DE UPLOAD DO ARQUIVO COM A COR PADRÃO DA PÁGINA */
+    [data-testid="stFileUploader"] section {
+        background-color: #FFF2ED !important;
+        border: 2px dashed #E07A5F !important;
+        border-radius: 12px !important;
+    }
+
+    [data-testid="stFileUploader"] button {
+        border-radius: 12px !important;
+        border: 1px solid #C85A3B !important;
+        background: linear-gradient(100deg, #E07A5F, #F4A261) !important;
+        color: #FFFFFF !important;
+        font-weight: 700 !important;
+        box-shadow: 0 4px 12px rgba(224,122,95,.22) !important;
+    }
+
+    [data-testid="stFileUploader"] button:hover {
+        background: linear-gradient(100deg, #CC6B50, #E7934F) !important;
+        color: #FFFFFF !important;
     }
 
     /* SELECTBOX (Tom de Voz) COM FUNDO BRANCO E TEXTO ESCURO FORÇADO */
@@ -567,7 +588,7 @@ with tab1:
 
 
 # =========================================================
-# ABA 2: TRANSCRIÇÃO AUTOMÁTICA DE VÍDEO (COM RESILIÊNCIA A 503)
+# ABA 2: TRANSCRIÇÃO AUTOMÁTICA DE VÍDEO (PLAYER MENOR + BOTÃO PADRÃO)
 # =========================================================
 with tab2:
     st.subheader("Transcrição de Vídeo por IA")
@@ -582,7 +603,10 @@ with tab2:
     )
 
     if video_arquivo is not None:
-        st.video(video_arquivo)
+        # Colunas para centralizar e deixar o player de vídeo menor visualmente
+        col_v1, col_v2, col_v3 = st.columns([1, 2, 1])
+        with col_v2:
+            st.video(video_arquivo)
         
         if st.button("🎙️ Extrair Transcrição do Vídeo", use_container_width=True):
             with st.spinner("Enviando arquivo e extraindo a transcrição com IA..."):
@@ -601,7 +625,6 @@ with tab2:
                         time.sleep(2)
                         video_ref = client.files.get(name=video_ref.name)
                     
-                    # Tenta os modelos em loop caso o primeiro esteja com alta demanda (503)
                     response_transcricao = None
                     ultimo_erro = None
                     
