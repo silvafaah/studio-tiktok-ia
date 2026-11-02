@@ -281,7 +281,7 @@ st.markdown("""
 
 
 GEMINI_MODELS = [
-    "gemini-2.5-flash",
+    "gemini-3.8-flash",
     "gemini-3.5-flash-lite",
     "gemini-3.6-flash",
 ]
@@ -566,7 +566,7 @@ with tab1:
 
 
 # =========================================================
-# ABA 2: TRANSCRIÇÃO AUTOMÁTICA DE VÍDEO (NOVO!)
+# ABA 2: TRANSCRIÇÃO AUTOMÁTICA DE VÍDEO
 # =========================================================
 with tab2:
     st.subheader("Transcrição de Vídeo por IA")
@@ -586,27 +586,22 @@ with tab2:
         if st.button("🎙️ Extrair Transcrição do Vídeo", use_container_width=True):
             with st.spinner("Enviando arquivo e extraindo a transcrição com IA..."):
                 try:
-                    # Usando a Google GenAI Files API oficial para upload do arquivo em memória
                     from google import genai
                     
                     client = genai.Client(api_key=API_KEY)
                     
-                    # Salva temporariamente no ambiente de execução do Streamlit
                     temp_path = "temp_uploaded_video.mp4"
                     with open(temp_path, "wb") as f:
                         f.write(video_arquivo.getbuffer())
                     
-                    # Upload para a API do Gemini
                     video_ref = client.files.upload(file=temp_path)
                     
-                    # Aguarda o processamento do arquivo de mídia
                     while video_ref.state.name == "PROCESSING":
                         time.sleep(2)
                         video_ref = client.files.get(name=video_ref.name)
                     
-                    # Solicita a transcrição ao Gemini Flash
                     response_transcricao = client.models.generate_content(
-                        model='gemini-2.5-flash',
+                        model='gemini-3.8-flash',
                         contents=[
                             video_ref,
                             "Faça a transcrição palavra por palavra, exata e completa de tudo o que é falado neste vídeo."
