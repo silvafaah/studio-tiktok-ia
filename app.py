@@ -157,48 +157,45 @@ st.markdown("""
         box-shadow: 0 2px 8px rgba(224,122,95,.08) !important;
     }
 
-    /* Selectbox (Tom de Voz) totalmente estilizado em branco e legível */
-    [data-testid="stSelectbox"] [data-baseweb="select"] {
+    /* FORÇAR SELECTBOX (Tom de Voz) COM FUNDO BRANCO E TEXTO ESCURO */
+    div[data-baseweb="select"] {
+        background-color: #FFFFFF !important;
         background: #FFFFFF !important;
         border: 1px solid #E6BDB2 !important;
         border-radius: 11px !important;
-        box-shadow: 0 2px 8px rgba(224,122,95,.08) !important;
     }
 
-    [data-testid="stSelectbox"] [data-baseweb="select"] > div {
+    div[data-baseweb="select"] > div {
+        background-color: #FFFFFF !important;
         background: #FFFFFF !important;
         color: #3D2C2E !important;
         border-radius: 11px !important;
         min-height: 48px;
     }
 
-    [data-testid="stSelectbox"] [data-baseweb="select"] span,
-    [data-testid="stSelectbox"] [data-baseweb="select"] div {
+    div[data-baseweb="select"] span {
         color: #3D2C2E !important;
         -webkit-text-fill-color: #3D2C2E !important;
-        font-family: 'Inter', 'Segoe UI', Arial, sans-serif !important;
         font-size: 1.12rem !important;
     }
 
-    /* Menu Popover das opções do Selectbox */
-    [data-baseweb="popover"],
-    [data-baseweb="menu"],
-    [role="listbox"] {
+    /* Menu Popover / Opções do Selectbox */
+    [data-baseweb="popover"], [data-baseweb="menu"], [role="listbox"] {
+        background-color: #FFFFFF !important;
         background: #FFFFFF !important;
         border: 1px solid #E6BDB2 !important;
         border-radius: 10px !important;
-        box-shadow: 0 4px 14px rgba(224,122,95,.15) !important;
     }
 
     [role="option"] {
+        background-color: #FFFFFF !important;
         background: #FFFFFF !important;
         color: #3D2C2E !important;
-        font-family: 'Inter', 'Segoe UI', Arial, sans-serif !important;
         font-size: 1.08rem !important;
-        padding: 10px 14px !important;
     }
 
-    [role="option"]:hover, [role="option"] [aria-selected="true"] {
+    [role="option"]:hover {
+        background-color: #FCE6DF !important;
         background: #FCE6DF !important;
         color: #C85A3B !important;
     }
@@ -217,7 +214,7 @@ st.markdown("""
 
     [data-testid="stTextInput"] [data-baseweb="input"]:focus-within,
     [data-testid="stTextArea"] [data-baseweb="textarea"]:focus-within,
-    [data-testid="stSelectbox"] [data-baseweb="select"]:focus-within {
+    div[data-baseweb="select"]:focus-within {
         border-color: #E07A5F !important;
         box-shadow: 0 0 0 2px rgba(224,122,95,.20) !important;
     }
