@@ -380,7 +380,7 @@ def chamar_gemini_com_loading(prompt_texto, mensagem_status="A inteligência art
         ],
         "generationConfig": {
             "temperature": 0.8,
-            "maxOutputTokens": 4096  # <--- Dobrado para evitar corte nos roteiros longos
+            "maxOutputTokens": 4096
         }
     }
 
@@ -438,6 +438,9 @@ def chamar_gemini_com_loading(prompt_texto, mensagem_status="A inteligência art
 
                     if not texto:
                         return "⚠️ O Gemini respondeu, mas não retornou texto."
+
+                    # Remove tags <br> indesejadas do texto gerado
+                    texto = re.sub(r'(?i)<br\s*/?>', ' ', texto)
 
                     return texto
 
