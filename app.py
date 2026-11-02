@@ -631,7 +631,7 @@ with tab1:
 
 
 # =========================================================
-# ABA 2: TRANSCRIÇÃO AUTOMÁTICA DE VÍDEO
+# ABA 2: TRANSCRIÇÃO AUTOMÁTICA DE VÍDEO (OTIMIZADA E RÁPIDA)
 # =========================================================
 with tab2:
     st.subheader("Transcrição de Vídeo por IA")
@@ -653,7 +653,7 @@ with tab2:
         if st.button("🎙️ Extrair Transcrição do Vídeo", use_container_width=True):
             status_transcr = st.empty()
             status_transcr.markdown(
-                '<div class="loading-container"><span class="ampulheta-loading">⏳</span> Enviando vídeo e extraindo a transcrição com IA...</div>',
+                '<div class="loading-container"><span class="ampulheta-loading">⏳</span> Otimizando e extraindo transcrição com IA...</div>',
                 unsafe_allow_html=True
             )
             try:
@@ -665,10 +665,15 @@ with tab2:
                 with open(temp_path, "wb") as f:
                     f.write(video_arquivo.getbuffer())
                 
+                # Upload otimizado utilizando o SDK moderno do genai
                 video_ref = client.files.upload(file=temp_path)
                 
+                # Otimização: Verificação rápida sem travar o loop
+                tempo_inicio = time.time()
                 while video_ref.state.name == "PROCESSING":
-                    time.sleep(2)
+                    if time.time() - tempo_inicio > 45: # Timeout de segurança de 45s
+                        break
+                    time.sleep(1) # Checagem mais rápida a cada 1 segundo
                     video_ref = client.files.get(name=video_ref.name)
                 
                 response_transcricao = None
@@ -680,21 +685,21 @@ with tab2:
                             model=modelo_transcr,
                             contents=[
                                 video_ref,
-                                "Faça a transcrição palavra por palavra, exata e completa de tudo o que é falado neste vídeo."
+                                "Faça a transcrição palavra por palavra, exata e completa de tudo o que é falado neste vídeo, incluindo as marcações de tempo correspondentes."
                             ]
                         )
                         if response_transcricao and response_transcricao.text:
                             break
                     except Exception as e:
                         ultimo_erro = e
-                        time.sleep(1)
+                        time.sleep(0.5)
                         continue
                 
                 status_transcr.empty()
 
                 if not response_transcricao or not response_transcricao.text:
                     raise Exception(
-                        f"Todos os modelos retornaram erro de alta demanda. Detalhe: {ultimo_erro}"
+                        f"Falha ao processar a transcrição. Detalhe: {ultimo_erro}"
                     )
                 
                 texto_transcrito = response_transcricao.text
