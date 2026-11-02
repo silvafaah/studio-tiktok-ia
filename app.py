@@ -1,6 +1,11 @@
-# -*- coding: utf-8 -*-
+# coding: utf-8
+import sys
+import io
 import streamlit as st
 from google import genai
+
+# Força o ambiente a aceitar UTF-8 para evitar erros de acentuação
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 # Configuração da página
 st.set_page_config(
@@ -46,7 +51,6 @@ if prompt_usuario := st.chat_input("Digite o nome do produto e o que ele resolve
                     # Configura o cliente do Gemini com a chave fornecida
                     client = genai.Client(api_key=api_key)
                     
-                    # Instrução de sistema embutida
                     system_prompt = (
                         "Voce e um especialista em marketing digital e vendas no TikTok Shop. "
                         "Sempre que o usuario enviar um produto ou ideia, crie um roteiro de video curto "
