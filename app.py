@@ -15,19 +15,19 @@ st.set_page_config(
 
 
 # =========================================================
-# IDENTIDADE VISUAL: ESMERALDA PROFUNDO + DOURADO & COBRE
+# IDENTIDADE VISUAL: PÊSSEGO ACONCHEGANTE + TERRACOTA & COBRE
 # =========================================================
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
     :root {
-        --primaria: #0F5132;
-        --primaria-hover: #146c43;
-        --destaque: #D9A036;
-        --fundo: #F4F9F6;
-        --texto: #1F2D24;
-        --texto-suave: #5C6B62;
+        --primaria: #E07A5F;
+        --primaria-hover: #CC6B50;
+        --destaque: #F4A261;
+        --fundo: #FFF8F5;
+        --texto: #3D2C2E;
+        --texto-suave: #6E585A;
     }
 
     html, body, [class*="css"], button, input, textarea {
@@ -40,98 +40,108 @@ st.markdown("""
 
     .stApp {
         background:
-            radial-gradient(ellipse at 8% 0%, rgba(217,160,54,.12), transparent 35%),
-            radial-gradient(ellipse at 95% 12%, rgba(15,81,50,.08), transparent 35%),
+            radial-gradient(ellipse at 8% 0%, rgba(244,162,97,.15), transparent 35%),
+            radial-gradient(ellipse at 95% 12%, rgba(224,122,95,.10), transparent 35%),
             var(--fundo) !important;
         color: var(--texto) !important;
-        font-size: 16px !important;
+        font-size: 18px !important;
     }
 
+    /* Barra superior do Streamlit mais visível e destacada */
     [data-testid="stHeader"] {
-        background: rgba(244,249,246,.94) !important;
+        background: #FCECE4 !important;
+        border-bottom: 1px solid #F0D4CB !important;
+        visibility: visible !important;
     }
 
     [data-testid="stAppViewContainer"] > .main {
         background: transparent !important;
     }
 
-    /* Tipografia */
+    /* Tipografia (Aumentada em 2pt) */
     h1, h2, h3, h4, p, label, .stMarkdown, [data-testid="stWidgetLabel"] {
         font-family: 'Inter', 'Segoe UI', Arial, sans-serif !important;
         color: var(--texto);
     }
 
     h1 {
-        color: #0F5132 !important;
-        font-size: 2.25rem !important;
+        color: #C85A3B !important;
+        font-size: 2.5rem !important;
         font-weight: 800 !important;
         letter-spacing: -1px;
     }
 
     h2 {
-        color: #146c43 !important;
-        font-size: 1.65rem !important;
+        color: #D36C4E !important;
+        font-size: 1.85rem !important;
         font-weight: 700 !important;
     }
 
     h3 {
-        color: #146c43 !important;
-        font-size: 1.3rem !important;
+        color: #D36C4E !important;
+        font-size: 1.45rem !important;
         font-weight: 700 !important;
     }
 
     p, .stMarkdown {
-        font-size: 1rem !important;
-        line-height: 1.65 !important;
+        font-size: 1.12rem !important;
+        line-height: 1.7 !important;
     }
 
     [data-testid="stWidgetLabel"] p,
     [data-testid="stWidgetLabel"] label,
     .stTextInput label, .stTextArea label, .stSelectbox label {
-        color: #2D4034 !important;
-        font-size: 1rem !important;
-        font-weight: 650 !important;
+        color: #4A3538 !important;
+        font-size: 1.12rem !important;
+        font-weight: 700 !important;
     }
 
     [data-testid="stCaptionContainer"] {
         color: var(--texto-suave) !important;
-        font-size: .92rem !important;
+        font-size: 1.02rem !important;
     }
 
     /* Abas */
     .stTabs [data-baseweb="tab-list"] {
         gap: 12px;
-        border-bottom: 2px solid #D8E7DE;
+        border-bottom: 2px solid #F0D4CB;
     }
 
     .stTabs [data-baseweb="tab"] {
-        background: #E2EFE7 !important;
-        color: #2D5A42 !important;
+        background: #FCE6DF !important;
+        color: #A3482D !important;
         border-radius: 12px 12px 0 0;
         padding: 12px 20px;
-        border: 1px solid #C5E1D1;
-        font-size: .98rem !important;
+        border: 1px solid #E6BDB2;
+        font-size: 1.08rem !important;
         font-weight: 600 !important;
     }
 
     .stTabs [aria-selected="true"] {
-        background: #0F5132 !important;
+        background: #E07A5F !important;
         color: #FFFFFF !important;
-        border-bottom: 3px solid #D9A036 !important;
+        border-bottom: 3px solid #C85A3B !important;
         font-weight: 750 !important;
     }
 
-    /* Campos de Entrada */
+    /* Container central para diminuir a largura visual dos inputs */
+    .block-container {
+        padding-top: 2.2rem;
+        padding-bottom: 3rem;
+        max-width: 720px;
+    }
+
+    /* Campos de Entrada com largura ajustada e fonte maior */
     [data-testid="stTextInput"] input,
     [data-testid="stTextArea"] textarea,
     div[data-baseweb="input"] input,
     div[data-baseweb="textarea"] textarea {
         background: #FFFFFF !important;
-        color: #1F2D24 !important;
-        -webkit-text-fill-color: #1F2D24 !important;
-        caret-color: #0F5132 !important;
+        color: #3D2C2E !important;
+        -webkit-text-fill-color: #3D2C2E !important;
+        caret-color: #E07A5F !important;
         font-family: 'Inter', 'Segoe UI', Arial, sans-serif !important;
-        font-size: 1rem !important;
+        font-size: 1.12rem !important;
         font-weight: 500 !important;
         line-height: 1.5 !important;
         border-radius: 10px !important;
@@ -142,113 +152,121 @@ st.markdown("""
     div[data-baseweb="input"] > div,
     div[data-baseweb="textarea"] > div {
         background: #FFFFFF !important;
-        border: 1px solid #C5E1D1 !important;
+        border: 1px solid #E6BDB2 !important;
         border-radius: 11px !important;
-        box-shadow: 0 2px 8px rgba(15,81,50,.06) !important;
+        box-shadow: 0 2px 8px rgba(224,122,95,.08) !important;
     }
 
-    /* Select */
-    [data-testid="stSelectbox"] [data-baseweb="select"] > div,
-    div[data-baseweb="select"] > div {
+    /* Selectbox (Tom de Voz) totalmente estilizado em branco e legível */
+    [data-testid="stSelectbox"] [data-baseweb="select"] {
         background: #FFFFFF !important;
-        color: #1F2D24 !important;
-        border: 1px solid #C5E1D1 !important;
+        border: 1px solid #E6BDB2 !important;
         border-radius: 11px !important;
-        min-height: 44px;
-        box-shadow: 0 2px 8px rgba(15,81,50,.06) !important;
+        box-shadow: 0 2px 8px rgba(224,122,95,.08) !important;
     }
 
-    [data-testid="stSelectbox"] [data-baseweb="select"] *,
-    div[data-baseweb="select"] * {
-        color: #1F2D24 !important;
-        -webkit-text-fill-color: #1F2D24 !important;
+    [data-testid="stSelectbox"] [data-baseweb="select"] > div {
+        background: #FFFFFF !important;
+        color: #3D2C2E !important;
+        border-radius: 11px !important;
+        min-height: 48px;
+    }
+
+    [data-testid="stSelectbox"] [data-baseweb="select"] span,
+    [data-testid="stSelectbox"] [data-baseweb="select"] div {
+        color: #3D2C2E !important;
+        -webkit-text-fill-color: #3D2C2E !important;
         font-family: 'Inter', 'Segoe UI', Arial, sans-serif !important;
-        font-size: 1rem !important;
+        font-size: 1.12rem !important;
     }
 
+    /* Menu Popover das opções do Selectbox */
     [data-baseweb="popover"],
     [data-baseweb="menu"],
-    [role="listbox"],
-    [role="option"] {
+    [role="listbox"] {
         background: #FFFFFF !important;
-        color: #1F2D24 !important;
-        font-family: 'Inter', 'Segoe UI', Arial, sans-serif !important;
-        font-size: .98rem !important;
+        border: 1px solid #E6BDB2 !important;
+        border-radius: 10px !important;
+        box-shadow: 0 4px 14px rgba(224,122,95,.15) !important;
     }
 
-    [role="option"]:hover {
-        background: #E2EFE7 !important;
+    [role="option"] {
+        background: #FFFFFF !important;
+        color: #3D2C2E !important;
+        font-family: 'Inter', 'Segoe UI', Arial, sans-serif !important;
+        font-size: 1.08rem !important;
+        padding: 10px 14px !important;
+    }
+
+    [role="option"]:hover, [role="option"] [aria-selected="true"] {
+        background: #FCE6DF !important;
+        color: #C85A3B !important;
     }
 
     input::placeholder, textarea::placeholder {
-        color: #8A9A90 !important;
-        -webkit-text-fill-color: #8A9A90 !important;
+        color: #A8908D !important;
+        -webkit-text-fill-color: #A8908D !important;
         opacity: 1 !important;
     }
 
     [data-testid="stTextInput"] input:focus,
     [data-testid="stTextArea"] textarea:focus {
         background: #FFFFFF !important;
-        color: #1F2D24 !important;
+        color: #3D2C2E !important;
     }
 
     [data-testid="stTextInput"] [data-baseweb="input"]:focus-within,
     [data-testid="stTextArea"] [data-baseweb="textarea"]:focus-within,
     [data-testid="stSelectbox"] [data-baseweb="select"]:focus-within {
-        border-color: #0F5132 !important;
-        box-shadow: 0 0 0 2px rgba(15,81,50,.15) !important;
+        border-color: #E07A5F !important;
+        box-shadow: 0 0 0 2px rgba(224,122,95,.20) !important;
     }
 
     /* Botões */
     .stButton > button,
     .stDownloadButton > button {
         border-radius: 12px;
-        border: 1px solid #0F5132;
-        background: linear-gradient(100deg, #0F5132, #198754);
+        border: 1px solid #C85A3B;
+        background: linear-gradient(100deg, #E07A5F, #F4A261);
         color: #FFFFFF !important;
         font-family: 'Inter', 'Segoe UI', Arial, sans-serif !important;
-        font-size: .98rem !important;
+        font-size: 1.08rem !important;
         font-weight: 700 !important;
-        min-height: 46px;
-        box-shadow: 0 4px 12px rgba(15,81,50,.18);
+        min-height: 50px;
+        box-shadow: 0 4px 12px rgba(224,122,95,.22);
         transition: transform .15s ease, box-shadow .15s ease;
     }
 
     .stButton > button:hover,
     .stDownloadButton > button:hover {
-        border-color: #146c43;
-        background: linear-gradient(100deg, #146c43, #218838);
+        border-color: #A3482D;
+        background: linear-gradient(100deg, #CC6B50, #E7934F);
         color: #FFFFFF !important;
-        box-shadow: 0 6px 16px rgba(15,81,50,.25);
+        box-shadow: 0 6px 16px rgba(224,122,95,.30);
         transform: translateY(-1px);
     }
 
     .stButton > button:focus,
     .stDownloadButton > button:focus {
-        box-shadow: 0 0 0 3px rgba(217,160,54,.35) !important;
+        box-shadow: 0 0 0 3px rgba(244,162,97,.40) !important;
     }
 
     /* Cartões e Alertas */
     [data-testid="stAlert"] {
         border-radius: 12px;
-        border: 1px solid #D8E7DE;
+        border: 1px solid #F0D4CB;
         background: #FFFFFF !important;
+        font-size: 1.08rem !important;
     }
 
     [data-testid="stVerticalBlockBorderWrapper"] {
-        border-color: #D8E7DE;
+        border-color: #F0D4CB;
         border-radius: 14px;
-        background: rgba(255,255,255,.75);
+        background: rgba(255,255,255,.85);
     }
 
     hr {
-        border-color: #D8E7DE;
-    }
-
-    .block-container {
-        padding-top: 2.2rem;
-        padding-bottom: 3rem;
-        max-width: 900px;
+        border-color: #F0D4CB;
     }
 
     @media (max-width: 640px) {
@@ -258,11 +276,11 @@ st.markdown("""
             padding-right: 1rem;
         }
 
-        h1 { font-size: 1.8rem !important; }
+        h1 { font-size: 2rem !important; }
 
         .stTabs [data-baseweb="tab"] {
             padding: 10px 12px;
-            font-size: .9rem !important;
+            font-size: 1rem !important;
         }
     }
 </style>
