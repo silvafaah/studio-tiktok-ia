@@ -80,8 +80,8 @@ with tab1:
                         f"Tom de Voz: {tom}"
                     )
 
-                    # Utilizando 'gemini-pro' que é o modelo universal padrão da API v1beta
-                    model = genai.GenerativeModel('gemini-pro')
+                    # Usando o modelo atual correto e recomendado pela Google API
+                    model = genai.GenerativeModel('gemini-1.5-flash')
                     response = model.generate_content(prompt)
 
                     st.markdown("---")
@@ -119,7 +119,7 @@ with tab2:
                         f"Meu produto para adaptar esta estrutura:\n{produto_usuario_rv}"
                     )
 
-                    model = genai.GenerativeModel('gemini-pro')
+                    model = genai.GenerativeModel('gemini-1.5-flash')
                     response_rv = model.generate_content(prompt_rv)
 
                     st.markdown("---")
