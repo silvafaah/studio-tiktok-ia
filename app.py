@@ -1,3 +1,4 @@
+import re
 import time
 
 import requests
@@ -175,6 +176,16 @@ def chamar_gemini(prompt_texto):
     )
 
 
+
+
+# =========================================================
+# GERAR NOME SEGURO PARA O ARQUIVO TXT
+# =========================================================
+def nome_arquivo_txt(produto):
+    nome = re.sub(r"[^A-Za-z0-9_-]+", "_", produto.strip())
+    nome = nome.strip("_-") or "roteiro"
+    return f"roteiro_{nome[:50]}.txt"
+
 # =========================================================
 # LIMPAR CAMPOS DA PRIMEIRA ABA
 # =========================================================
@@ -301,6 +312,16 @@ with tab1:
                 st.subheader("💡 Resultado:")
                 st.markdown(resultado)
 
+                if not resultado.startswith(("❌", "⚠️", "🔑", "🌐")):
+                    st.download_button(
+                        label="📄 Baixar roteiro em TXT",
+                        data=resultado,
+                        file_name=nome_arquivo_txt(produto),
+                        mime="text/plain",
+                        use_container_width=True,
+                        key="download_txt_zero"
+                    )
+
 
 # =========================================================
 # ABA 2: ENGENHARIA REVERSA DE HOOKS
@@ -363,3 +384,13 @@ with tab2:
                 st.markdown("---")
                 st.subheader("🚀 Novo Roteiro:")
                 st.markdown(resultado_rv)
+
+                if not resultado_rv.startswith(("❌", "⚠️", "🔑", "🌐")):
+                    st.download_button(
+                        label="📄 Baixar roteiro em TXT",
+                        data=resultado_rv,
+                        file_name=nome_arquivo_txt(produto_usuario_rv),
+                        mime="text/plain",
+                        use_container_width=True,
+                        key="download_txt_reversa"
+                    )
