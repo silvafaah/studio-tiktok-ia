@@ -15,7 +15,7 @@ st.set_page_config(
 
 
 # =========================================================
-# IDENTIDADE VISUAL & ANIMAÇÃO DA LUPA GIRANDO
+# IDENTIDADE VISUAL & ANIMAÇÃO DA AMPULHETA
 # =========================================================
 st.markdown("""
 <style>
@@ -283,18 +283,18 @@ st.markdown("""
         border-color: #F0D4CB;
     }
 
-    /* ANIMAÇÃO DA LUPA GIRANDO */
-    @keyframes girarLupa {
+    /* ANIMAÇÃO DA AMPULHETA GIRANDO */
+    @keyframes girarAmpulheta {
         0% { transform: rotate(0deg) scale(1); }
         50% { transform: rotate(180deg) scale(1.15); }
         100% { transform: rotate(360deg) scale(1); }
     }
 
-    .lupa-loading {
+    .ampulheta-loading {
         display: inline-block;
-        animation: girarLupa 1.6s infinite ease-in-out;
+        animation: girarAmpulheta 1.8s infinite ease-in-out;
         font-size: 1.8rem;
-        margin-right: 10px;
+        margin-right: 12px;
         vertical-align: middle;
     }
 
@@ -356,7 +356,7 @@ if not API_KEY:
 
 
 # =========================================================
-# FUNÇÃO PARA CHAMAR A API GEMINI COM LUPA GIRANDO
+# FUNÇÃO PARA CHAMAR A API GEMINI COM AMPULHETA GIRANDO
 # =========================================================
 def chamar_gemini_com_loading(prompt_texto, mensagem_status="A inteligência artificial está trabalhando..."):
     if not API_KEY:
@@ -365,10 +365,9 @@ def chamar_gemini_com_loading(prompt_texto, mensagem_status="A inteligência art
             "encontrada nos Secrets do Streamlit."
         )
 
-    # Placeholder visual com a lupinha girando
     status_placeholder = st.empty()
     status_placeholder.markdown(
-        f'<div class="loading-container"><span class="lupa-loading">🔍</span> {mensagem_status}</div>',
+        f'<div class="loading-container"><span class="ampulheta-loading">⏳</span> {mensagem_status}</div>',
         unsafe_allow_html=True
     )
 
@@ -654,7 +653,7 @@ with tab2:
         if st.button("🎙️ Extrair Transcrição do Vídeo", use_container_width=True):
             status_transcr = st.empty()
             status_transcr.markdown(
-                '<div class="loading-container"><span class="lupa-loading">🔍</span> Enviando vídeo e extraindo a transcrição com IA...</div>',
+                '<div class="loading-container"><span class="ampulheta-loading">⏳</span> Enviando vídeo e extraindo a transcrição com IA...</div>',
                 unsafe_allow_html=True
             )
             try:
