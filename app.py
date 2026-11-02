@@ -19,48 +19,83 @@ st.set_page_config(
 # =========================================================
 st.markdown("""
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
     :root {
         --lavanda: #8B72C8;
         --lavanda-escuro: #7056AD;
         --rosa: #F3A6B8;
-        --coral: #E98783;
-        --menta: #A8D8C5;
         --fundo: #FFF9FC;
         --texto: #40364D;
         --texto-suave: #746A7D;
+    }
+
+    html, body, [class*="css"], button, input, textarea {
+        font-family: 'Inter', 'Segoe UI', Arial, sans-serif !important;
+    }
+
+    html, body, .stApp {
+        color-scheme: light !important;
     }
 
     .stApp {
         background:
             radial-gradient(ellipse at 8% 0%, rgba(243,166,184,.18), transparent 34%),
             radial-gradient(ellipse at 95% 12%, rgba(168,216,197,.20), transparent 32%),
-            var(--fundo);
-        color: var(--texto);
+            var(--fundo) !important;
+        color: var(--texto) !important;
+        font-size: 16px !important;
     }
 
     [data-testid="stHeader"] {
-        background: rgba(255,249,252,.88);
+        background: rgba(255,249,252,.94) !important;
     }
 
     [data-testid="stAppViewContainer"] > .main {
-        background: transparent;
+        background: transparent !important;
     }
 
-    h1, h2, h3, h4, p, label, .stMarkdown {
+    /* Tipografia: maior, moderna e confortável */
+    h1, h2, h3, h4, p, label, .stMarkdown, [data-testid="stWidgetLabel"] {
+        font-family: 'Inter', 'Segoe UI', Arial, sans-serif !important;
         color: var(--texto);
     }
 
     h1 {
         color: #7056AD !important;
-        letter-spacing: -0.5px;
+        font-size: 2.25rem !important;
+        font-weight: 800 !important;
+        letter-spacing: -1px;
     }
 
-    h2, h3 {
+    h2 {
         color: #795FAF !important;
+        font-size: 1.65rem !important;
+        font-weight: 700 !important;
+    }
+
+    h3 {
+        color: #795FAF !important;
+        font-size: 1.3rem !important;
+        font-weight: 700 !important;
+    }
+
+    p, .stMarkdown {
+        font-size: 1rem !important;
+        line-height: 1.65 !important;
+    }
+
+    [data-testid="stWidgetLabel"] p,
+    [data-testid="stWidgetLabel"] label,
+    .stTextInput label, .stTextArea label, .stSelectbox label {
+        color: #51445F !important;
+        font-size: 1rem !important;
+        font-weight: 650 !important;
     }
 
     [data-testid="stCaptionContainer"] {
-        color: var(--texto-suave);
+        color: var(--texto-suave) !important;
+        font-size: .92rem !important;
     }
 
     /* Abas */
@@ -70,39 +105,98 @@ st.markdown("""
     }
 
     .stTabs [data-baseweb="tab"] {
-        background: #F3ECFA;
-        color: #695783;
+        background: #F3ECFA !important;
+        color: #695783 !important;
         border-radius: 12px 12px 0 0;
-        padding: 11px 18px;
+        padding: 12px 19px;
         border: 1px solid #E6D9F2;
+        font-size: .98rem !important;
+        font-weight: 600 !important;
     }
 
     .stTabs [aria-selected="true"] {
         background: #E9DDF8 !important;
         color: #62499B !important;
         border-bottom: 3px solid #8B72C8 !important;
-        font-weight: 700;
+        font-weight: 750 !important;
     }
 
-    /* Campos de texto e seletores */
+    /* Campos: força fundo branco e texto escuro em todos os elementos internos */
+    [data-testid="stTextInput"] input,
+    [data-testid="stTextArea"] textarea,
+    div[data-baseweb="input"] input,
+    div[data-baseweb="textarea"] textarea {
+        background: #FFFFFF !important;
+        color: #40364D !important;
+        -webkit-text-fill-color: #40364D !important;
+        caret-color: #7056AD !important;
+        font-family: 'Inter', 'Segoe UI', Arial, sans-serif !important;
+        font-size: 1rem !important;
+        font-weight: 500 !important;
+        line-height: 1.5 !important;
+        border-radius: 10px !important;
+    }
+
+    [data-testid="stTextInput"] [data-baseweb="input"],
+    [data-testid="stTextArea"] [data-baseweb="textarea"],
     div[data-baseweb="input"] > div,
-    div[data-baseweb="textarea"] > div,
-    div[data-baseweb="select"] > div {
+    div[data-baseweb="textarea"] > div {
         background: #FFFFFF !important;
         border: 1px solid #E5D9EF !important;
         border-radius: 11px !important;
-        box-shadow: 0 2px 8px rgba(112,86,173,.05);
+        box-shadow: 0 2px 8px rgba(112,86,173,.06) !important;
     }
 
-    input, textarea {
+    /* Select: texto, fundo, menu e opções */
+    [data-testid="stSelectbox"] [data-baseweb="select"] > div,
+    div[data-baseweb="select"] > div {
+        background: #FFFFFF !important;
+        color: #40364D !important;
+        border: 1px solid #E5D9EF !important;
+        border-radius: 11px !important;
+        min-height: 44px;
+        box-shadow: 0 2px 8px rgba(112,86,173,.06) !important;
+    }
+
+    [data-testid="stSelectbox"] [data-baseweb="select"] *,
+    div[data-baseweb="select"] * {
+        color: #40364D !important;
+        -webkit-text-fill-color: #40364D !important;
+        font-family: 'Inter', 'Segoe UI', Arial, sans-serif !important;
+        font-size: 1rem !important;
+    }
+
+    [data-baseweb="popover"],
+    [data-baseweb="menu"],
+    [role="listbox"],
+    [role="option"] {
+        background: #FFFFFF !important;
+        color: #40364D !important;
+        font-family: 'Inter', 'Segoe UI', Arial, sans-serif !important;
+        font-size: .98rem !important;
+    }
+
+    [role="option"]:hover {
+        background: #F3ECFA !important;
+    }
+
+    input::placeholder, textarea::placeholder {
+        color: #9A8FA4 !important;
+        -webkit-text-fill-color: #9A8FA4 !important;
+        opacity: 1 !important;
+    }
+
+    [data-testid="stTextInput"] input:focus,
+    [data-testid="stTextArea"] textarea:focus {
+        background: #FFFFFF !important;
         color: #40364D !important;
     }
 
-    div[data-baseweb="input"] > div:focus-within,
-    div[data-baseweb="textarea"] > div:focus-within,
-    div[data-baseweb="select"] > div:focus-within {
+    [data-testid="stTextInput"] [data-baseweb="input"]:focus-within,
+    [data-testid="stTextArea"] [data-baseweb="textarea"]:focus-within,
+    [data-testid="stSelectbox"] [data-baseweb="select"]:focus-within {
         border-color: #A58BD8 !important;
-        box-shadow: 0 0 0 2px rgba(139,114,200,.14) !important;
+        box-shadow: 0 0 0 2px rgba(139,114,200,.15) !important;
     }
 
     /* Botões */
@@ -112,8 +206,10 @@ st.markdown("""
         border: 1px solid #8B72C8;
         background: linear-gradient(100deg, #8B72C8, #A68BD8);
         color: #FFFFFF !important;
-        font-weight: 650;
-        min-height: 44px;
+        font-family: 'Inter', 'Segoe UI', Arial, sans-serif !important;
+        font-size: .98rem !important;
+        font-weight: 700 !important;
+        min-height: 46px;
         box-shadow: 0 4px 10px rgba(112,86,173,.14);
         transition: transform .15s ease, box-shadow .15s ease;
     }
@@ -136,19 +232,19 @@ st.markdown("""
     [data-testid="stAlert"] {
         border-radius: 12px;
         border: 1px solid #E9DDF4;
-        background: #FFFFFF;
+        background: #FFFFFF !important;
     }
 
     [data-testid="stVerticalBlockBorderWrapper"] {
         border-color: #E9DFF4;
         border-radius: 14px;
+        background: rgba(255,255,255,.62);
     }
 
     hr {
         border-color: #E9DFF4;
     }
 
-    /* Espaçamento e leitura */
     .block-container {
         padding-top: 2.2rem;
         padding-bottom: 3rem;
@@ -162,9 +258,11 @@ st.markdown("""
             padding-right: 1rem;
         }
 
+        h1 { font-size: 1.8rem !important; }
+
         .stTabs [data-baseweb="tab"] {
-            padding: 9px 10px;
-            font-size: 0.88rem;
+            padding: 10px 11px;
+            font-size: .9rem !important;
         }
     }
 </style>
