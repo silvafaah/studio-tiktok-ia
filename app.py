@@ -73,17 +73,16 @@ with tab1:
                     )
                     
                     prompt = (
+                        f"{system_instruction}\n\n"
                         f"Produto: {produto}\n"
                         f"Benefício Principal: {beneficio}\n"
                         f"Público-Alvo: {publico}\n"
                         f"Tom de Voz: {tom}"
                     )
 
-                    # Utilizando o modelo padrão estável com system_instruction integrado no prompt para evitar erros de versão de API
-                    model = genai.GenerativeModel('gemini-1.5-pro')
-                    
-                    full_prompt = f"{system_instruction}\n\n{prompt}"
-                    response = model.generate_content(full_prompt)
+                    # Utilizando 'gemini-pro' que é o modelo universal padrão da API v1beta
+                    model = genai.GenerativeModel('gemini-pro')
+                    response = model.generate_content(prompt)
 
                     st.markdown("---")
                     st.subheader("💡 Roteiro Gerado com Sucesso:")
@@ -115,14 +114,13 @@ with tab2:
                     )
                     
                     prompt_rv = (
+                        f"{system_instruction_rv}\n\n"
                         f"Vídeo de referência (em alta):\n{video_viral_texto}\n\n"
                         f"Meu produto para adaptar esta estrutura:\n{produto_usuario_rv}"
                     )
 
-                    model = genai.GenerativeModel('gemini-1.5-pro')
-                    
-                    full_prompt_rv = f"{system_instruction_rv}\n\n{prompt_rv}"
-                    response_rv = model.generate_content(full_prompt_rv)
+                    model = genai.GenerativeModel('gemini-pro')
+                    response_rv = model.generate_content(prompt_rv)
 
                     st.markdown("---")
                     st.subheader("🚀 Novo Roteiro Remodelado:")
