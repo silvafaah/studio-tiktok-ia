@@ -12,7 +12,7 @@ st.set_page_config(
 if "GEMINI_API_KEY" in st.secrets:
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 else:
-    st.error("⚠️ Chave GEMINI_API_KEY não encontrada nos Secrets do Streamlit. Configure-a nas definições do aplicativo.")
+    st.error("⚠️ Chave GEMINI_API_KEY não encontrada nos Secrets do Streamlit.")
 
 # Título Principal
 st.markdown("<h1 style='text-align: center;'>🎬 Studio TikTok Shop IA</h1>", unsafe_allow_html=True)
@@ -28,7 +28,6 @@ with tab1:
     st.subheader("Criar Roteiro Persuasivo para Vendas")
     st.markdown("Preencha os dados abaixo para gerar um roteiro otimizado para conversão no TikTok Shop.")
 
-    # Gerenciamento de Estado para limpar os campos da Aba 1
     if "produto" not in st.session_state:
         st.session_state.produto = ""
     if "beneficio" not in st.session_state:
@@ -80,12 +79,11 @@ with tab1:
                         f"Tom de Voz: {tom}"
                     )
 
-                    model = genai.GenerativeModel(
-                        model_name="gemini-1.5-flash",
-                        system_instruction=system_instruction
-                    )
+                    # Utilizando o modelo padrão estável com system_instruction integrado no prompt para evitar erros de versão de API
+                    model = genai.GenerativeModel('gemini-1.5-pro')
                     
-                    response = model.generate_content(prompt)
+                    full_prompt = f"{system_instruction}\n\n{prompt}"
+                    response = model.generate_content(full_prompt)
 
                     st.markdown("---")
                     st.subheader("💡 Roteiro Gerado com Sucesso:")
@@ -121,12 +119,10 @@ with tab2:
                         f"Meu produto para adaptar esta estrutura:\n{produto_usuario_rv}"
                     )
 
-                    model = genai.GenerativeModel(
-                        model_name="gemini-1.5-flash",
-                        system_instruction=system_instruction_rv
-                    )
+                    model = genai.GenerativeModel('gemini-1.5-pro')
                     
-                    response_rv = model.generate_content(prompt_rv)
+                    full_prompt_rv = f"{system_instruction_rv}\n\n{prompt_rv}"
+                    response_rv = model.generate_content(full_prompt_rv)
 
                     st.markdown("---")
                     st.subheader("🚀 Novo Roteiro Remodelado:")
