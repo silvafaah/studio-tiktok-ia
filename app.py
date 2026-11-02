@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import streamlit as st
 from google import genai
 
@@ -45,20 +46,19 @@ if prompt_usuario := st.chat_input("Digite o nome do produto e o que ele resolve
                     # Configura o cliente do Gemini com a chave fornecida
                     client = genai.Client(api_key=api_key)
                     
-                    # Instrução de sistema embutida para guiar a IA como especialista em marketing
+                    # Instrução de sistema embutida
                     system_prompt = (
-                        "Você é um especialista em marketing digital e vendas no TikTok Shop. "
-                        "Sempre que o usuário enviar um produto ou ideia, crie um roteiro de vídeo curto "
-                        "altamente persuasivo contendo: 1) Três opções de ganchos virais para os primeiros 3 segundos; "
-                        "2) O desenvolvimento rápido e dinâmico focado em conversão; "
-                        "3) Uma legenda criativa com chamada para ação (CTA) e hashtags virais."
+                        "Voce e um especialista em marketing digital e vendas no TikTok Shop. "
+                        "Sempre que o usuario enviar um produto ou ideia, crie um roteiro de video curto "
+                        "altamente persuasivo contendo: 1) Tres opcoes de ganchos virais para os primeiros 3 segundos; "
+                        "2) O desenvolvimento rapido e dinamico focado em conversao; "
+                        "3) Uma legenda criativa com chamada para acao (CTA) e hashtags virais."
                     )
                     
-                    # Monta o contexto combinando as regras com a mensagem atual do usuário
-                    conteudo_completo = f"{system_prompt}\n\nSolicitação do usuário: {prompt_usuario}"
+                    conteudo_completo = f"{system_prompt}\n\nSolicitacao: {prompt_usuario}"
                     
                     response = client.models.generate_content(
-                        model='gemini-3.8-flash',
+                        model='gemini-1.5-flash',
                         contents=conteudo_completo,
                     )
                     
