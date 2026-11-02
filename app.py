@@ -1,113 +1,110 @@
 import streamlit as st
 import google.generativeai as genai
 
-# Configuração da página
+# Configuração da Página
 st.set_page_config(
     page_title="Studio TikTok Shop IA",
     page_icon="🎬",
     layout="centered"
 )
 
-# Título principal do aplicativo
-st.title("🎬 Studio TikTok Shop IA")
-st.caption("Central de Inteligência para criação e engenharia reversa de roteiros virais para o TikTok Shop.")
+# Configuração da Chave de API do Gemini via Streamlit Secrets
+if "GEMINI_API_KEY" in st.secrets:
+    genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+else:
+    st.error("⚠️ Chave GEMINI_API_KEY não encontrada nos Secrets do Streamlit. Configure-a nas definições do aplicativo.")
 
-# Configuração da chave de API oculta no servidor (Secrets do Streamlit)
-try:
-    api_key = st.secrets["GEMINI_API_KEY"]
-    genai.configure(api_key=api_key)
-except Exception:
-    st.error("⚠️ Erro de Configuração: A chave 'GEMINI_API_KEY' não foi encontrada nos Secrets do Streamlit Cloud.")
-    st.stop()
+# Título Principal
+st.markdown("<h1 style='text-align: center;'>🎬 Studio TikTok Shop IA</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: gray;'>Central de Inteligência para criação e engenharia reversa de roteiros virais para o TikTok Shop.</p>", unsafe_allow_html=True)
 
-# Criação das Abas Principais
-aba1, aba2 = st.tabs(["📝 Gerar Roteiro do Zero", "⚡ Engenharia Reversa (Hooks)"])
+# Criação das Abas
+tab1, tab2 = st.tabs(["🎯 Gerar Roteiro do Zero", "⚡ Engenharia Reversa (Hooks)"])
 
 # ==========================================
-# ABA 1: GERADOR POR FORMULÁRIO
+# ABA 1: GERAR ROTEIRO DO ZERO
 # ==========================================
-with aba1:
+with tab1:
     st.subheader("Criar Roteiro Persuasivo para Vendas")
     st.markdown("Preencha os dados abaixo para gerar um roteiro otimizado para conversão no TikTok Shop.")
 
-    # Função para limpar os campos do formulário usando o st.session_state
-    def limpar_formulario():
-        st.session_state["input_produto"] = ""
-        st.session_state["input_beneficio"] = ""
-        st.session_state["input_publico"] = ""
-        st.session_state["input_tom"] = "Humor e Descontração"
+    # Gerenciamento de Estado para limpar os campos da Aba 1
+    if "produto" not in st.session_state:
+        st.session_state.produto = ""
+    if "beneficio" not in st.session_state:
+        st.session_state.beneficio = ""
+    if "publico" not in st.session_state:
+        st.session_state.publico = ""
 
-    # Campos do formulário vinculados ao session_state
-    produto = st.text_input("Nome do Produto:", key="input_produto", placeholder="Ex: Bermuda Jeans Cross")
-    beneficio = st.text_input("Principal Benefício / O que ele resolve:", key="input_beneficio", placeholder="Ex: Não aperta na cintura e modela o corpo")
-    publico = st.text_input("Público-Alvo:", key="input_publico", placeholder="Ex: Mulheres que buscam conforto no dia a dia")
+    produto = st.text_input("Nome do Produto:", value=st.session_state.produto, placeholder="Ex: Bermuda Jeans Cross", key="input_produto")
+    beneficio = st.text_input("Principal Benefício / O que ele resolve:", value=st.session_state.beneficio, placeholder="Ex: Não aperta na cintura e modela o corpo", key="input_beneficio")
+    publico = st.text_input("Público-Alvo:", value=st.session_state.publico, placeholder="Ex: Mulheres que buscam conforto no dia a dia", key="input_publico")
     
-    tom = st.selectbox(
-        "Tom de Voz:",
-        ["Humor e Descontração", "Urgência / Escassez", "Autoridade / Educacional", "Curiosidade / Impacto"],
-        key="input_tom"
-    )
+    tom = st.selectbox("Tom de Voz:", [
+        "Curiosidade / Impacto",
+        "Humor e Descontração",
+        "Autoridade / Sinceridade",
+        "Urgência / Escassez"
+    ])
 
-    st.markdown("<br>", unsafe_allow_html=True)
+    col1, col2 = st.columns(2)
+    with col1:
+        gerar = st.button("🚀 Gerar Roteiro", use_container_width=True)
+    with col2:
+        limpar = st.button("🗑️ Limpar Campos", use_container_width=True)
 
-    # Botões lado a lado
-    col_gerar, col_limpar = st.columns(2)
+    if limpar:
+        st.session_state.produto = ""
+        st.session_state.beneficio = ""
+        st.session_state.publico = ""
+        st.rerun()
 
-    with col_gerar:
-        btn_gerar = st.button("🚀 Gerar Roteiro", use_container_width=True)
-
-    with col_limpar:
-        btn_limpar = st.button("🗑️ Limpar Campos", on_click=limpar_formulario, use_container_width=True)
-
-    # Ação ao clicar em Gerar Roteiro
-    if btn_gerar:
+    if gerar:
         if not produto or not beneficio:
-            st.warning("Por favor, preencha pelo menos o nome do produto e o principal benefício.")
+            st.warning("Por favor, preencha pelo menos o Nome do Produto e o Principal Benefício.")
         else:
-            with st.spinner("A criar roteiro e legendas virais..."):
+            with st.spinner("A inteligência artificial está a criar o seu roteiro viral..."):
                 try:
                     system_instruction = (
-                        "Você é um especialista sênior em marketing digital, tráfego pago e vendas no TikTok Shop. "
-                        "Gere um roteiro de vídeo curto altamente persuasivo contendo exatamente: "
-                        "1) Três opções de ganchos virais de alto impacto para os primeiros 3 segundos; "
-                        "2) O corpo do roteiro dinâmico e focado em conversão e dor do cliente; "
-                        "3) Instruções visuais de cenas (B-roll); "
-                        "4) Uma legenda criativa com chamada para ação (CTA) e hashtags virais."
+                        "Você é um especialista em marketing digital, copywriting para TikTok Shop e criador de roteiros virais. "
+                        "Gere um roteiro de vídeo curto (entre 30 a 60 segundos) altamente persuasivo, estruturado com: "
+                        "1. Gancho Inicial (Hook forte nos primeiros 3 segundos para reter atenção). "
+                        "2. Apresentação do Problema e Solução (foco no benefício informado). "
+                        "3. Chamada para Ação (CTA) clara para clicar no carrinho laranja do TikTok Shop."
                     )
                     
-                    prompt_usuario = (
-                        f"Crie um roteiro para o TikTok Shop com base nestes dados:\n"
-                        f"- Produto: {produto}\n"
-                        f"- Benefício principal: {beneficio}\n"
-                        f"- Público-alvo: {publico}\n"
-                        f"- Tom de voz: {tom}"
+                    prompt = (
+                        f"Produto: {produto}\n"
+                        f"Benefício Principal: {beneficio}\n"
+                        f"Público-Alvo: {publico}\n"
+                        f"Tom de Voz: {tom}"
                     )
 
                     model = genai.GenerativeModel(
-                        model_name='gemini-1.5-pro',
+                        model_name="gemini-1.5-flash",
                         system_instruction=system_instruction
                     )
                     
-                    response = model.generate_content(prompt_usuario)
-                    
+                    response = model.generate_content(prompt)
+
                     st.markdown("---")
-                    st.subheader("✨ Roteiro Gerado com Sucesso:")
+                    st.subheader("💡 Roteiro Gerado com Sucesso:")
                     st.markdown(response.text)
-                    
+
                 except Exception as e:
                     st.error(f"Ocorreu um erro ao comunicar com a API: {e}")
 
 # ==========================================
-# ABA 2: ENGENHARIA REVERSA (KALODATA STYLE)
+# ABA 2: ENGENHARIA REVERSA DE HOOKS
 # ==========================================
-with aba2:
+with tab2:
     st.subheader("Engenharia Reversa de Vídeos em Alta")
-    st.markdown("Cole a transcrição ou a ideia de um vídeo campeão de vendas (visto no Kalodata ou FastMoss) para criar uma versão inédita adaptada ao seu produto.")
+    st.markdown("Cole a transcrição ou a ideia de um vídeo campeão de vendas para criar uma versão inédita adaptada ao seu produto.")
 
     video_viral_texto = st.text_area("Transcrição ou Ideia do Vídeo Viral / Concorrente:", placeholder="Cole aqui o que é dito no vídeo que está a vender muito...")
     produto_usuario_rv = st.text_input("O seu produto para adaptar:", placeholder="Ex: Bermuda Jeans")
 
-    if st.button("⚡ Remodelar Roteiro Campeão", use_container_width=True):
+    if st.button("🔄 Remodelar Roteiro Campeão", use_container_width=True):
         if not video_viral_texto or not produto_usuario_rv:
             st.warning("Por favor, preencha a transcrição do vídeo viral e o seu produto.")
         else:
@@ -121,19 +118,19 @@ with aba2:
                     
                     prompt_rv = (
                         f"Vídeo de referência (em alta):\n{video_viral_texto}\n\n"
-                        f"Meu produto para adaptar essa estrutura:\n{produto_usuario_rv}"
+                        f"Meu produto para adaptar esta estrutura:\n{produto_usuario_rv}"
                     )
 
                     model = genai.GenerativeModel(
-                        model_name='gemini-1.5-pro',
-                        system_instruction=system_instruction
+                        model_name="gemini-1.5-flash",
+                        system_instruction=system_instruction_rv
                     )
                     
-                    response_rv = model_rv.generate_content(prompt_rv)
-                    
+                    response_rv = model.generate_content(prompt_rv)
+
                     st.markdown("---")
-                    st.subheader("🔥 Novo Roteiro Remodelado:")
+                    st.subheader("🚀 Novo Roteiro Remodelado:")
                     st.markdown(response_rv.text)
-                    
+
                 except Exception as e:
-                    st.error(f"Ocorreu um erro ao gerar a remodelagem: {e}")
+                    st.error(f"Ocorreu um erro ao gerar a remodelação: {e}")
