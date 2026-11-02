@@ -15,7 +15,7 @@ st.set_page_config(
 
 
 # =========================================================
-# IDENTIDADE VISUAL: PÊSSEGO ACONCHEGANTE + TERRACOTA & COBRE
+# IDENTIDADE VISUAL & ANIMAÇÃO DA LUPA GIRANDO
 # =========================================================
 st.markdown("""
 <style>
@@ -283,6 +283,37 @@ st.markdown("""
         border-color: #F0D4CB;
     }
 
+    /* ANIMAÇÃO DA LUPA GIRANDO */
+    @keyframes girarLupa {
+        0% { transform: rotate(0deg) scale(1); }
+        50% { transform: rotate(180deg) scale(1.15); }
+        100% { transform: rotate(360deg) scale(1); }
+    }
+
+    .lupa-loading {
+        display: inline-block;
+        animation: girarLupa 1.6s infinite ease-in-out;
+        font-size: 1.8rem;
+        margin-right: 10px;
+        vertical-align: middle;
+    }
+
+    .loading-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.2rem;
+        background: #FFF2ED;
+        border: 1px solid #F0D4CB;
+        border-radius: 12px;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        color: #C85A3B;
+        font-weight: 700;
+        font-size: 1.1rem;
+        box-shadow: 0 4px 12px rgba(224,122,95,.1);
+    }
+
     @media (max-width: 640px) {
         .block-container {
             padding-top: 1.2rem;
@@ -325,14 +356,21 @@ if not API_KEY:
 
 
 # =========================================================
-# FUNÇÃO PARA CHAMAR A API GEMINI (TEXTO)
+# FUNÇÃO PARA CHAMAR A API GEMINI COM LUPA GIRANDO
 # =========================================================
-def chamar_gemini(prompt_texto):
+def chamar_gemini_com_loading(prompt_texto, mensagem_status="A inteligência artificial está trabalhando..."):
     if not API_KEY:
         return (
             "**Configuração pendente:** a chave GEMINI_API_KEY não foi "
             "encontrada nos Secrets do Streamlit."
         )
+
+    # Placeholder visual com a lupinha girando
+    status_placeholder = st.empty()
+    status_placeholder.markdown(
+        f'<div class="loading-container"><span class="lupa-loading">🔍</span> {mensagem_status}</div>',
+        unsafe_allow_html=True
+    )
 
     headers = {"Content-Type": "application/json"}
     payload = {
@@ -365,6 +403,7 @@ def chamar_gemini(prompt_texto):
                 erros.append(f"{modelo}: tempo limite excedido")
                 break
             except requests.exceptions.ConnectionError:
+                status_placeholder.empty()
                 return (
                     "🌐 **Não foi possível conectar ao Google Gemini.** "
                     "Verifique a conexão do aplicativo e tente novamente."
@@ -383,6 +422,7 @@ def chamar_gemini(prompt_texto):
                             "blockReason",
                             "A API não retornou uma resposta."
                         )
+                        status_placeholder.empty()
                         return (
                             "⚠️ Não foi possível gerar o texto. "
                             f"Motivo: {motivo}"
@@ -395,12 +435,15 @@ def chamar_gemini(prompt_texto):
                         if parte.get("text")
                     ).strip()
 
+                    status_placeholder.empty()
+
                     if not texto:
                         return "⚠️ O Gemini respondeu, mas não retornou texto."
 
                     return texto
 
                 except (ValueError, KeyError, IndexError, TypeError):
+                    status_placeholder.empty()
                     return (
                         "⚠️ Não foi possível interpretar a resposta "
                         "recebida do Gemini."
@@ -416,6 +459,7 @@ def chamar_gemini(prompt_texto):
             status = response.status_code
 
             if status in (401, 403):
+                status_placeholder.empty()
                 return (
                     "🔑 **Problema com a chave ou permissão da API.** "
                     "Confira se a GEMINI_API_KEY está correta e ativa. "
@@ -423,6 +467,7 @@ def chamar_gemini(prompt_texto):
                 )
 
             if status == 400:
+                status_placeholder.empty()
                 return (
                     "❌ **A API recusou a solicitação (400).** "
                     f"Detalhe: {detalhe}"
@@ -435,11 +480,13 @@ def chamar_gemini(prompt_texto):
                     continue
                 break
 
+            status_placeholder.empty()
             return (
                 f"❌ **Erro na API (HTTP {status}).** "
                 f"Detalhe: {detalhe}"
             )
 
+    status_placeholder.empty()
     resumo_erros = "\n".join(f"- {erro}" for erro in erros)
     return (
         "❌ **Não foi possível obter resposta de nenhum dos modelos "
@@ -550,45 +597,42 @@ with tab1:
                 "e o Principal Benefício."
             )
         else:
-            with st.spinner(
-                "A inteligência artificial está criando seu roteiro..."
-            ):
-                system_instruction = (
-                    "Você é um especialista em criação de roteiros curtos "
-                    "para vídeos de produtos. Desenvolva um roteiro dinâmico com duração total de 30 a 60 segundos. "
-                    "IMPORTANTE: Apresente o roteiro em formato de tabela Markdown contendo DUAS colunas principais: 'Tempo / Bloco' (ex: 00s - 05s) e 'Texto Falado' (a locução/fala direta para a câmera). "
-                    "NÃO inclua nenhuma descrição de cenas, diretrizes visuais ou ações. Apenas o tempo na primeira coluna e o texto falado correspondente na segunda coluna."
+            system_instruction = (
+                "Você é um especialista em criação de roteiros curtos "
+                "para vídeos de produtos. Desenvolva um roteiro dinâmico com duração total de 30 a 60 segundos. "
+                "IMPORTANTE: Apresente o roteiro em formato de tabela Markdown contendo DUAS colunas principais: 'Tempo / Bloco' (ex: 00s - 05s) e 'Texto Falado' (a locução/fala direta para a câmera). "
+                "NÃO inclua nenhuma descrição de cenas, diretrizes visuais ou ações. Apenas o tempo na primeira coluna e o texto falado correspondente na segunda coluna."
+            )
+
+            prompt_completo = (
+                f"{system_instruction}\n\n"
+                f"Crie o roteiro com base nestes dados:\n"
+                f"- Produto: {produto}\n"
+                f"- Benefício principal: {beneficio}\n"
+                f"- Público-alvo: {publico or 'Não especificado'}\n"
+                f"- Tom de voz: {tom}\n\n"
+                f"Entregue as três opções de gancho inicial, indique a mais forte e, em seguida, monte o roteiro completo estruturado em tabela com o tempo e o texto falado lado a lado, sem cenas."
+            )
+
+            resultado = chamar_gemini_com_loading(prompt_completo, "A inteligência artificial está criando seu roteiro...")
+
+            st.markdown("---")
+            st.subheader("💡 Resultado:")
+            st.markdown(resultado)
+
+            if not resultado.startswith(("❌", "⚠️", "🔑", "🌐")):
+                st.download_button(
+                    label="📄 Baixar roteiro em TXT",
+                    data=resultado,
+                    file_name=nome_arquivo_txt(produto),
+                    mime="text/plain",
+                    use_container_width=True,
+                    key="download_txt_zero"
                 )
-
-                prompt_completo = (
-                    f"{system_instruction}\n\n"
-                    f"Crie o roteiro com base nestes dados:\n"
-                    f"- Produto: {produto}\n"
-                    f"- Benefício principal: {beneficio}\n"
-                    f"- Público-alvo: {publico or 'Não especificado'}\n"
-                    f"- Tom de voz: {tom}\n\n"
-                    f"Entregue as três opções de gancho inicial, indique a mais forte e, em seguida, monte o roteiro completo estruturado em tabela com o tempo e o texto falado lado a lado, sem cenas."
-                )
-
-                resultado = chamar_gemini(prompt_completo)
-
-                st.markdown("---")
-                st.subheader("💡 Resultado:")
-                st.markdown(resultado)
-
-                if not resultado.startswith(("❌", "⚠️", "🔑", "🌐")):
-                    st.download_button(
-                        label="📄 Baixar roteiro em TXT",
-                        data=resultado,
-                        file_name=nome_arquivo_txt(produto),
-                        mime="text/plain",
-                        use_container_width=True,
-                        key="download_txt_zero"
-                    )
 
 
 # =========================================================
-# ABA 2: TRANSCRIÇÃO AUTOMÁTICA DE VÍDEO (PLAYER MENOR + BOTÃO PADRÃO)
+# ABA 2: TRANSCRIÇÃO AUTOMÁTICA DE VÍDEO
 # =========================================================
 with tab2:
     st.subheader("Transcrição de Vídeo por IA")
@@ -603,71 +647,77 @@ with tab2:
     )
 
     if video_arquivo is not None:
-        # Colunas para centralizar e deixar o player de vídeo menor visualmente
         col_v1, col_v2, col_v3 = st.columns([1, 2, 1])
         with col_v2:
             st.video(video_arquivo)
         
         if st.button("🎙️ Extrair Transcrição do Vídeo", use_container_width=True):
-            with st.spinner("Enviando arquivo e extraindo a transcrição com IA..."):
-                try:
-                    from google import genai
-                    
-                    client = genai.Client(api_key=API_KEY)
-                    
-                    temp_path = "temp_uploaded_video.mp4"
-                    with open(temp_path, "wb") as f:
-                        f.write(video_arquivo.getbuffer())
-                    
-                    video_ref = client.files.upload(file=temp_path)
-                    
-                    while video_ref.state.name == "PROCESSING":
-                        time.sleep(2)
-                        video_ref = client.files.get(name=video_ref.name)
-                    
-                    response_transcricao = None
-                    ultimo_erro = None
-                    
-                    for modelo_transcr in GEMINI_MODELS:
-                        try:
-                            response_transcricao = client.models.generate_content(
-                                model=modelo_transcr,
-                                contents=[
-                                    video_ref,
-                                    "Faça a transcrição palavra por palavra, exata e completa de tudo o que é falado neste vídeo."
-                                ]
-                            )
-                            if response_transcricao and response_transcricao.text:
-                                break
-                        except Exception as e:
-                            ultimo_erro = e
-                            time.sleep(1)
-                            continue
-                    
-                    if not response_transcricao or not response_transcricao.text:
-                        raise Exception(
-                            f"Todos os modelos retornaram erro de alta demanda. Detalhe: {ultimo_erro}"
+            status_transcr = st.empty()
+            status_transcr.markdown(
+                '<div class="loading-container"><span class="lupa-loading">🔍</span> Enviando vídeo e extraindo a transcrição com IA...</div>',
+                unsafe_allow_html=True
+            )
+            try:
+                from google import genai
+                
+                client = genai.Client(api_key=API_KEY)
+                
+                temp_path = "temp_uploaded_video.mp4"
+                with open(temp_path, "wb") as f:
+                    f.write(video_arquivo.getbuffer())
+                
+                video_ref = client.files.upload(file=temp_path)
+                
+                while video_ref.state.name == "PROCESSING":
+                    time.sleep(2)
+                    video_ref = client.files.get(name=video_ref.name)
+                
+                response_transcricao = None
+                ultimo_erro = None
+                
+                for modelo_transcr in GEMINI_MODELS:
+                    try:
+                        response_transcricao = client.models.generate_content(
+                            model=modelo_transcr,
+                            contents=[
+                                video_ref,
+                                "Faça a transcrição palavra por palavra, exata e completa de tudo o que é falado neste vídeo."
+                            ]
                         )
-                    
-                    texto_transcrito = response_transcricao.text
-                    
-                    st.success("Transcrição concluída com sucesso!")
-                    st.text_area(
-                        "Texto Transcrito (copie para usar na Engenharia Reversa):",
-                        value=texto_transcrito,
-                        height=250
-                    )
-                    
-                    st.download_button(
-                        label="📄 Baixar transcrição em TXT",
-                        data=texto_transcrito,
-                        file_name="transcricao_video.txt",
-                        mime="text/plain",
-                        use_container_width=True
-                    )
+                        if response_transcricao and response_transcricao.text:
+                            break
+                    except Exception as e:
+                        ultimo_erro = e
+                        time.sleep(1)
+                        continue
+                
+                status_transcr.empty()
 
-                except Exception as e:
-                    st.error(f"Erro ao processar o vídeo: {e}")
+                if not response_transcricao or not response_transcricao.text:
+                    raise Exception(
+                        f"Todos os modelos retornaram erro de alta demanda. Detalhe: {ultimo_erro}"
+                    )
+                
+                texto_transcrito = response_transcricao.text
+                
+                st.success("Transcrição concluída com sucesso!")
+                st.text_area(
+                    "Texto Transcrito (copie para usar na Engenharia Reversa):",
+                    value=texto_transcrito,
+                    height=250
+                )
+                
+                st.download_button(
+                    label="📄 Baixar transcrição em TXT",
+                    data=texto_transcrito,
+                    file_name="transcricao_video.txt",
+                    mime="text/plain",
+                    use_container_width=True
+                )
+
+            except Exception as e:
+                status_transcr.empty()
+                st.error(f"Erro ao processar o vídeo: {e}")
 
 
 # =========================================================
@@ -702,36 +752,33 @@ with tab3:
                 "e informe o seu produto."
             )
         else:
-            with st.spinner(
-                "Analisando o gancho e estruturando o novo roteiro..."
-            ):
-                system_instruction_rv = (
-                    "Você é um especialista em análise de roteiros e "
-                    "copywriting. Analise o gancho, a estrutura narrativa, "
-                    "o ritmo e os recursos de persuasão do texto fornecido. "
-                    "Crie uma versão original em tabela adaptada para o novo produto mantendo o timing ideal de 30 a 60 segundos. "
-                    "IMPORTANTE: Apresente o roteiro final em formato de tabela Markdown com as colunas 'Tempo / Bloco' e 'Texto Falado', contendo apenas a locução/fala sem nenhuma descrição de cenas."
+            system_instruction_rv = (
+                "Você é um especialista em análise de roteiros e "
+                "copywriting. Analise o gancho, a estrutura narrativa, "
+                "o ritmo e os recursos de persuasão do texto fornecido. "
+                "Crie uma versão original em tabela adaptada para o novo produto mantendo o timing ideal de 30 a 60 segundos. "
+                "IMPORTANTE: Apresente o roteiro final em formato de tabela Markdown com as colunas 'Tempo / Bloco' e 'Texto Falado', mantendo apenas a locução sem nenhuma descrição de cenas."
+            )
+
+            prompt_rv_completo = (
+                f"{system_instruction_rv}\n\n"
+                f"Texto de referência:\n{video_viral_texto}\n\n"
+                f"Produto para adaptar:\n{produto_usuario_rv}\n\n"
+                f"Entregue: análise breve do gancho, três opções de novos ganchos, indique o mais forte e apresente o roteiro original formatado em tabela com tempo e texto falado, sem cenas."
+            )
+
+            resultado_rv = chamar_gemini_com_loading(prompt_rv_completo, "Analisando o gancho e estruturando o novo roteiro...")
+
+            st.markdown("---")
+            st.subheader("🚀 Novo Roteiro em Tabela:")
+            st.markdown(resultado_rv)
+
+            if not resultado_rv.startswith(("❌", "⚠️", "🔑", "🌐")):
+                st.download_button(
+                    label="📄 Baixar roteiro em TXT",
+                    data=resultado_rv,
+                    file_name=nome_arquivo_txt(produto_usuario_rv),
+                    mime="text/plain",
+                    use_container_width=True,
+                    key="download_txt_reversa"
                 )
-
-                prompt_rv_completo = (
-                    f"{system_instruction_rv}\n\n"
-                    f"Texto de referência:\n{video_viral_texto}\n\n"
-                    f"Produto para adaptar:\n{produto_usuario_rv}\n\n"
-                    f"Entregue: análise breve do gancho, três opções de novos ganchos, indique o mais forte e apresente o roteiro original formatado em tabela com tempo e texto falado, sem cenas."
-                )
-
-                resultado_rv = chamar_gemini(prompt_rv_completo)
-
-                st.markdown("---")
-                st.subheader("🚀 Novo Roteiro em Tabela:")
-                st.markdown(resultado_rv)
-
-                if not resultado_rv.startswith(("❌", "⚠️", "🔑", "🌐")):
-                    st.download_button(
-                        label="📄 Baixar roteiro em TXT",
-                        data=resultado_rv,
-                        file_name=nome_arquivo_txt(produto_usuario_rv),
-                        mime="text/plain",
-                        use_container_width=True,
-                        key="download_txt_reversa"
-                    )
