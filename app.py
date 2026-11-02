@@ -543,24 +543,19 @@ with tab1:
             ):
                 system_instruction = (
                     "Você é um especialista em criação de roteiros curtos "
-                    "para vídeos de produtos. Desenvolva um roteiro dinâmico com ritmo ideal para 30 a 60 segundos, estruturado em: "
-                    "1. Três opções diferentes de gancho inicial; "
-                    "2. Apresentação do problema e da solução; "
-                    "3. Demonstração ou explicação do produto; "
-                    "4. Chamada para ação clara. "
-                    "Não invente características, resultados, garantias, "
-                    "preços, descontos, estoque limitado ou urgência que "
-                    "não tenham sido informados. IMPORTANTE: Entregue APENAS o texto falado (locução/fala direta para a câmera), mantendo o timing perfeito de 30 a 60 segundos, mas eliminando totalmente qualquer descrição de cenas, diretrizes visuais ou marcações de ações."
+                    "para vídeos de produtos. Desenvolva um roteiro dinâmico com duração total de 30 a 60 segundos. "
+                    "IMPORTANTE: Apresente o roteiro em formato de tabela Markdown (ou lista clara) contendo DUAS colunas principais: 'Tempo / Bloco' (ex: 00s - 05s) e 'Texto Falado' (a locução/fala direta para a câmera). "
+                    "NÃO inclua nenhuma descrição de cenas, diretrizes visuais ou ações. Apenas o tempo na primeira coluna e o texto falado correspondente na segunda coluna."
                 )
 
                 prompt_completo = (
                     f"{system_instruction}\n\n"
-                    f"Crie o roteiro mantendo o tempo dinâmico de 30 a 60 segundos com base nestes dados:\n"
+                    f"Crie o roteiro com base nestes dados:\n"
                     f"- Produto: {produto}\n"
                     f"- Benefício principal: {beneficio}\n"
                     f"- Público-alvo: {publico or 'Não especificado'}\n"
                     f"- Tom de voz: {tom}\n\n"
-                    f"Entregue os três ganchos, indique o mais forte e apresente o roteiro completo focado estritamente no texto falado, sem marcações de cenas."
+                    f"Entregue as três opções de gancho inicial, indique a mais forte e, em seguida, monte o roteiro completo estruturado em tabela com o tempo e o texto falado lado a lado, sem cenas."
                 )
 
                 resultado = chamar_gemini(prompt_completo)
@@ -619,17 +614,15 @@ with tab2:
                     "Você é um especialista em análise de roteiros e "
                     "copywriting. Analise o gancho, a estrutura narrativa, "
                     "o ritmo e os recursos de persuasão do texto fornecido. "
-                    "Em seguida, crie uma versão original adaptada para o novo "
-                    "produto mantendo o timing ideal de 30 a 60 segundos. "
-                    "Não copie frases marcantes e não invente características, resultados ou preços que não foram informados. "
-                    "IMPORTANTE: Entregue o roteiro final focado unicamente no texto falado, sem nenhuma descrição de cenas."
+                    "Crie uma versão original adaptada para o novo produto mantendo o timing ideal de 30 a 60 segundos. "
+                    "IMPORTANTE: Apresente o roteiro final em formato de tabela Markdown com as colunas 'Tempo / Bloco' e 'Texto Falado', contendo apenas a locução/fala sem nenhuma descrição de cenas."
                 )
 
                 prompt_rv_completo = (
                     f"{system_instruction_rv}\n\n"
                     f"Texto de referência:\n{video_viral_texto}\n\n"
                     f"Produto para adaptar:\n{produto_usuario_rv}\n\n"
-                    f"Entregue: análise breve do gancho, três opções de novos ganchos mantendo o ritmo, indique o mais forte e crie o roteiro original focado estritamente no texto falado para gravação, sem cenas."
+                    f"Entregue: análise breve do gancho, três opções de novos ganchos, indique o mais forte e apresente o roteiro original formatado em tabela com tempo e texto falado, sem cenas."
                 )
 
                 resultado_rv = chamar_gemini(prompt_rv_completo)
