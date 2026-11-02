@@ -13,6 +13,164 @@ st.set_page_config(
     layout="centered"
 )
 
+
+# =========================================================
+# IDENTIDADE VISUAL: LAVANDA + ROSA-PÊSSEGO
+# =========================================================
+st.markdown("""
+<style>
+    :root {
+        --lavanda: #8B72C8;
+        --lavanda-escuro: #7056AD;
+        --rosa: #F3A6B8;
+        --coral: #E98783;
+        --menta: #A8D8C5;
+        --fundo: #FFF9FC;
+        --texto: #40364D;
+        --texto-suave: #746A7D;
+    }
+
+    .stApp {
+        background:
+            radial-gradient(ellipse at 8% 0%, rgba(243,166,184,.18), transparent 34%),
+            radial-gradient(ellipse at 95% 12%, rgba(168,216,197,.20), transparent 32%),
+            var(--fundo);
+        color: var(--texto);
+    }
+
+    [data-testid="stHeader"] {
+        background: rgba(255,249,252,.88);
+    }
+
+    [data-testid="stAppViewContainer"] > .main {
+        background: transparent;
+    }
+
+    h1, h2, h3, h4, p, label, .stMarkdown {
+        color: var(--texto);
+    }
+
+    h1 {
+        color: #7056AD !important;
+        letter-spacing: -0.5px;
+    }
+
+    h2, h3 {
+        color: #795FAF !important;
+    }
+
+    [data-testid="stCaptionContainer"] {
+        color: var(--texto-suave);
+    }
+
+    /* Abas */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 10px;
+        border-bottom: 2px solid #E9DFF4;
+    }
+
+    .stTabs [data-baseweb="tab"] {
+        background: #F3ECFA;
+        color: #695783;
+        border-radius: 12px 12px 0 0;
+        padding: 11px 18px;
+        border: 1px solid #E6D9F2;
+    }
+
+    .stTabs [aria-selected="true"] {
+        background: #E9DDF8 !important;
+        color: #62499B !important;
+        border-bottom: 3px solid #8B72C8 !important;
+        font-weight: 700;
+    }
+
+    /* Campos de texto e seletores */
+    div[data-baseweb="input"] > div,
+    div[data-baseweb="textarea"] > div,
+    div[data-baseweb="select"] > div {
+        background: #FFFFFF !important;
+        border: 1px solid #E5D9EF !important;
+        border-radius: 11px !important;
+        box-shadow: 0 2px 8px rgba(112,86,173,.05);
+    }
+
+    input, textarea {
+        color: #40364D !important;
+    }
+
+    div[data-baseweb="input"] > div:focus-within,
+    div[data-baseweb="textarea"] > div:focus-within,
+    div[data-baseweb="select"] > div:focus-within {
+        border-color: #A58BD8 !important;
+        box-shadow: 0 0 0 2px rgba(139,114,200,.14) !important;
+    }
+
+    /* Botões */
+    .stButton > button,
+    .stDownloadButton > button {
+        border-radius: 12px;
+        border: 1px solid #8B72C8;
+        background: linear-gradient(100deg, #8B72C8, #A68BD8);
+        color: #FFFFFF !important;
+        font-weight: 650;
+        min-height: 44px;
+        box-shadow: 0 4px 10px rgba(112,86,173,.14);
+        transition: transform .15s ease, box-shadow .15s ease;
+    }
+
+    .stButton > button:hover,
+    .stDownloadButton > button:hover {
+        border-color: #7056AD;
+        background: linear-gradient(100deg, #7056AD, #9276C9);
+        color: #FFFFFF !important;
+        box-shadow: 0 6px 14px rgba(112,86,173,.20);
+        transform: translateY(-1px);
+    }
+
+    .stButton > button:focus,
+    .stDownloadButton > button:focus {
+        box-shadow: 0 0 0 3px rgba(243,166,184,.35) !important;
+    }
+
+    /* Cartões e mensagens */
+    [data-testid="stAlert"] {
+        border-radius: 12px;
+        border: 1px solid #E9DDF4;
+        background: #FFFFFF;
+    }
+
+    [data-testid="stVerticalBlockBorderWrapper"] {
+        border-color: #E9DFF4;
+        border-radius: 14px;
+    }
+
+    hr {
+        border-color: #E9DFF4;
+    }
+
+    /* Espaçamento e leitura */
+    .block-container {
+        padding-top: 2.2rem;
+        padding-bottom: 3rem;
+        max-width: 900px;
+    }
+
+    @media (max-width: 640px) {
+        .block-container {
+            padding-top: 1.2rem;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        .stTabs [data-baseweb="tab"] {
+            padding: 9px 10px;
+            font-size: 0.88rem;
+        }
+    }
+</style>
+""", unsafe_allow_html=True)
+
+
 # O Flash-Lite é otimizado para tarefas rápidas e de alto volume.
 # Se estiver indisponível, o aplicativo tenta os modelos seguintes.
 GEMINI_MODELS = [
