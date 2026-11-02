@@ -58,7 +58,7 @@ if prompt_usuario := st.chat_input("Digite o nome do produto e o que ele resolve
                     conteudo_completo = f"{system_prompt}\n\nSolicitação do usuário: {prompt_usuario}"
                     
                     response = client.models.generate_content(
-                        model='gemini-1.5-flash',
+                        model='gemini-2.5-flash',
                         contents=conteudo_completo,
                     )
                     
