@@ -55,8 +55,9 @@ if prompt_usuario := st.chat_input("Digite o nome do produto e o que ele resolve
                     
                     conteudo_completo = f"{system_prompt}\n\nSolicitação: {prompt_usuario}"
                     
+                    # Usando o modelo atualizado exigido pelo Google GenAI SDK
                     response = client.models.generate_content(
-                        model='gemini-1.5-flash',
+                        model='gemini-2.5-flash',
                         contents=conteudo_completo,
                     )
                     
@@ -67,5 +68,15 @@ if prompt_usuario := st.chat_input("Digite o nome do produto e o que ele resolve
                     st.session_state.messages.append({"role": "assistant", "content": resposta_ia})
                     
                 except Exception as e:
-                    erro_msg = f"Ocorreu um erro ao comunicar com a API do Gemini: {e}"
-                    st.error(erro_msg)
+                    # Se der erro no 2.5, tenta alternar para o 3.8 automaticamente ou exibe o erro exato
+                    try:
+                        response = client.models.generate_content(
+                            model='gemini-3.8-flash',
+                            contents=conteudo_completo,
+                        )
+                        resposta_ia = response.text
+                        st.markdown(resposta_ia)
+                        st.session_state.messages.append({"role": "assistant", "content": resposta_ia})
+                    except Exception as e2:
+                        erro_msg = f"Ocorreu um erro ao comunicar com a API do Gemini: {e2}"
+                        st.error(erro_msg)
