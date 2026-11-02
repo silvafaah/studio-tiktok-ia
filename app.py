@@ -552,7 +552,7 @@ with tab1:
                     "Não invente características, resultados, garantias, "
                     "preços, descontos, estoque limitado ou urgência que "
                     "não tenham sido informados. Identifique qual gancho "
-                    "recomenda e use-o no roteiro completo."
+                    "recomenda e use-o no roteiro completo apenas com as falas faladas para a câmera, sem nenhuma descrição ou indicação de cenas."
                 )
 
                 prompt_completo = (
@@ -563,7 +563,7 @@ with tab1:
                     f"- Público-alvo: {publico or 'Não especificado'}\n"
                     f"- Tom de voz: {tom}\n\n"
                     f"Entregue os três ganchos, indique o mais forte e "
-                    f"apresente o roteiro com falas sugeridas e cenas."
+                    f"apresente o roteiro completo focado unicamente no texto falado (locução/fala), sem nenhuma descrição de cenas."
                 )
 
                 resultado = chamar_gemini(prompt_completo)
@@ -626,7 +626,8 @@ with tab2:
                     "produto. Não copie frases marcantes do texto de "
                     "referência e não invente características, resultados, "
                     "garantias, preços, descontos, estoque limitado ou "
-                    "urgência que não tenham sido informados."
+                    "urgência que não tenham sido informados. "
+                    "Entregue o roteiro final focado unicamente no texto falado (locução/fala para o vídeo), sem nenhuma descrição de cenas ou direções visuais."
                 )
 
                 prompt_rv_completo = (
@@ -635,8 +636,7 @@ with tab2:
                     f"Produto para adaptar:\n{produto_usuario_rv}\n\n"
                     f"Entregue: análise breve do gancho e da estrutura, "
                     f"três opções de novos ganchos, indique o mais forte "
-                    f"e crie um roteiro original com cenas e chamada "
-                    f"para ação."
+                    f"e crie o roteiro original focado apenas nas falas para o vídeo, sem descrições de cenas."
                 )
 
                 resultado_rv = chamar_gemini(prompt_rv_completo)
