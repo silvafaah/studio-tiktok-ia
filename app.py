@@ -124,9 +124,9 @@ with aba2:
                         f"Meu produto para adaptar essa estrutura:\n{produto_usuario_rv}"
                     )
 
-                    model_rv = genai.GenerativeModel(
-                        model_name='gemini-1.5-flash',
-                        system_instruction=system_instruction_rv
+                    model = genai.GenerativeModel(
+                        model_name='gemini-1.5-pro',
+                        system_instruction=system_instruction
                     )
                     
                     response_rv = model_rv.generate_content(prompt_rv)
