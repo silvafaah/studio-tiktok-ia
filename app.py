@@ -356,6 +356,19 @@ if not API_KEY:
 
 
 # =========================================================
+# FUNÇÃO PARA CORRIGIR QUEBRAS DE LINHA ENTRE OS SEGUNDOS
+# =========================================================
+def formatar_quebras_linha(texto):
+    if not texto:
+        return texto
+    # Garante 2 quebras de linha antes de padrões de tempo como "00s - 07s ->" ou "00s - 07s ."
+    texto_formatado = re.sub(r'(?<!\n)\s*(\b\d{2}s\s*[-–]\s*\d{2}s\b)', r'\n\n\1', texto)
+    # Garante 2 quebras de linha antes das Opções de Ganchos
+    texto_formatado = re.sub(r'(?<!\n)\s*(Opção \d+:)', r'\n\n\1', texto_formatado)
+    return texto_formatado.strip()
+
+
+# =========================================================
 # FUNÇÃO PARA CHAMAR A API GEMINI COM TOKENS AMPLIADOS (4096)
 # =========================================================
 def chamar_gemini_com_loading(prompt_texto, mensagem_status="A inteligência artificial está trabalhando..."):
@@ -439,8 +452,9 @@ def chamar_gemini_com_loading(prompt_texto, mensagem_status="A inteligência art
                     if not texto:
                         return "⚠️ O Gemini respondeu, mas não retornou texto."
 
-                    # Remove tags <br> indesejadas
+                    # Remove tags <br> indesejadas e ajusta quebras de linha
                     texto = re.sub(r'(?i)<br\s*/?>', ' ', texto)
+                    texto = formatar_quebras_linha(texto)
 
                     return texto
 
@@ -540,13 +554,13 @@ tab1, tab2, tab3 = st.tabs([
 ])
 
 # =========================================================
-# ABA 1: GERAR ROTEIRO DO ZERO (TEXTO DIRETO / SEM TABELA)
+# ABA 1: GERAR ROTEIRO DO ZERO (LINHA POR LINHA COM ENTER)
 # =========================================================
 with tab1:
     st.subheader("Criar Roteiro Persuasivo para Vendas")
     st.markdown(
         "Preencha os dados abaixo para gerar um roteiro otimizado "
-        "em formato de texto para o TikTok Shop."
+        "em texto corrido para o TikTok Shop."
     )
 
     produto = st.text_input(
@@ -601,12 +615,15 @@ with tab1:
         else:
             system_instruction = (
                 "Você é um especialista em criação de roteiros curtos "
-                "para vídeos de produtos. Desenvolva um roteiro dinâmico com duração total de 30 a 60 segundos. "
-                "IMPORTANTE: NÃO USE TABELAS OU MARCKDOWN DE TABELA. APRESENTE O ROTEIRO APENAS EM TEXTO CORRIDO, LINHA POR LINHA. "
-                "Formato obrigatório para cada bloco do roteiro:\n"
-                "00s - 07s -> [Texto falado aqui]\n"
+                "para vídeos de produtos. Desenvolva um roteiro dinâmico com duração total de 30 a 60 segundos.\n\n"
+                "REGRAS OBRIGATÓRIAS DE FORMATO:\n"
+                "1. NÃO USE TABELAS.\n"
+                "2. PULE DUAS LINHAS (ENTER DUPLO) ENTRE CADA BLOCO DE TEMPO para que cada um fique estritamente em uma nova linha no Markdown.\n"
+                "3. Formato obrigatório para cada bloco:\n"
+                "00s - 07s -> [Texto falado aqui]\n\n"
                 "07s - 16s -> [Texto falado aqui]\n\n"
-                "NÃO inclua descrições de cena ou diretrizes visuais. Apenas o tempo, a seta '->' e o texto falado."
+                "16s - 27s -> [Texto falado aqui]\n\n"
+                "NÃO inclua descrições de cena. Apenas a marcação de tempo, a seta '->' e o texto falado."
             )
 
             prompt_completo = (
@@ -616,7 +633,7 @@ with tab1:
                 f"- Benefício principal: {beneficio}\n"
                 f"- Público-alvo: {publico or 'Não especificado'}\n"
                 f"- Tom de voz: {tom}\n\n"
-                f"Entregue as três opções de gancho inicial, indique a mais forte e, em seguida, monte o roteiro completo em texto simples usando o formato de setas (ex: 00s - 07s -> texto)."
+                f"Entregue as três opções de gancho inicial (com quebra de linha entre elas), indique a mais forte e, em seguida, monte o roteiro completo em texto simples com cada tempo em uma linha separada."
             )
 
             resultado = chamar_gemini_com_loading(prompt_completo, "A inteligência artificial está criando seu roteiro...")
@@ -726,7 +743,7 @@ with tab2:
 
 
 # =========================================================
-# ABA 3: ENGENHARIA REVERSA DE HOOKS (TEXTO DIRETO / SEM TABELA)
+# ABA 3: ENGENHARIA REVERSA DE HOOKS (LINHA POR LINHA COM ENTER)
 # =========================================================
 with tab3:
     st.subheader("Engenharia Reversa de Vídeos em Alta")
@@ -760,19 +777,22 @@ with tab3:
             system_instruction_rv = (
                 "Você é um especialista em análise de roteiros e copywriting. "
                 "Analise o gancho, a estrutura narrativa e os recursos de persuasão do texto fornecido. "
-                "Crie uma versão original em texto simples adaptada para o novo produto mantendo a duração de 30 a 60 segundos. "
-                "IMPORTANTE: NÃO USE TABELAS. APRESENTE O ROTEIRO APENAS EM TEXTO CORRIDO, LINHA POR LINHA. "
-                "Formato obrigatório para cada bloco do roteiro:\n"
-                "00s - 07s -> [Texto falado aqui]\n"
+                "Crie uma versão original em texto simples adaptada para o novo produto mantendo a duração de 30 a 60 segundos.\n\n"
+                "REGRAS OBRIGATÓRIAS DE FORMATO:\n"
+                "1. NÃO USE TABELAS.\n"
+                "2. PULE DUAS LINHAS (ENTER DUPLO) ENTRE CADA BLOCO DE TEMPO para que cada um fique em sua própria linha no Markdown.\n"
+                "3. Formato obrigatório para cada bloco:\n"
+                "00s - 07s -> [Texto falado aqui]\n\n"
                 "07s - 16s -> [Texto falado aqui]\n\n"
-                "NÃO inclua descrições de cena. Apenas o tempo, a seta '->' e o texto falado."
+                "16s - 27s -> [Texto falado aqui]\n\n"
+                "NÃO inclua descrições de cena. Apenas a marcação de tempo, a seta '->' e o texto falado."
             )
 
             prompt_rv_completo = (
                 f"{system_instruction_rv}\n\n"
                 f"Texto de referência:\n{video_viral_texto}\n\n"
                 f"Produto para adaptar:\n{produto_usuario_rv}\n\n"
-                f"Entregue: análise breve do gancho, três opções de novos ganchos, indique o mais forte e apresente o roteiro adaptado em texto simples usando o formato de setas (ex: 00s - 07s -> texto)."
+                f"Entregue: análise breve do gancho, três opções de novos ganchos (com quebra de linha entre elas), indique o mais forte e apresente o roteiro adaptado em texto simples com cada tempo em uma linha separada."
             )
 
             resultado_rv = chamar_gemini_com_loading(prompt_rv_completo, "Analisando o gancho e estruturando o novo roteiro...")
