@@ -439,7 +439,7 @@ def chamar_gemini_com_loading(prompt_texto, mensagem_status="A inteligência art
                     if not texto:
                         return "⚠️ O Gemini respondeu, mas não retornou texto."
 
-                    # Remove tags <br> indesejadas do texto gerado
+                    # Remove tags <br> indesejadas
                     texto = re.sub(r'(?i)<br\s*/?>', ' ', texto)
 
                     return texto
@@ -540,13 +540,13 @@ tab1, tab2, tab3 = st.tabs([
 ])
 
 # =========================================================
-# ABA 1: GERAR ROTEIRO DO ZERO
+# ABA 1: GERAR ROTEIRO DO ZERO (TEXTO DIRETO / SEM TABELA)
 # =========================================================
 with tab1:
     st.subheader("Criar Roteiro Persuasivo para Vendas")
     st.markdown(
         "Preencha os dados abaixo para gerar um roteiro otimizado "
-        "em tabela estruturada para o TikTok Shop."
+        "em formato de texto para o TikTok Shop."
     )
 
     produto = st.text_input(
@@ -602,8 +602,11 @@ with tab1:
             system_instruction = (
                 "Você é um especialista em criação de roteiros curtos "
                 "para vídeos de produtos. Desenvolva um roteiro dinâmico com duração total de 30 a 60 segundos. "
-                "IMPORTANTE: Apresente o roteiro em formato de tabela Markdown contendo DUAS colunas principais: 'Tempo / Bloco' (ex: 00s - 05s) e 'Texto Falado' (a locução/fala direta para a câmera). "
-                "NÃO inclua nenhuma descrição de cenas, diretrizes visuais ou ações. Apenas o tempo na primeira coluna e o texto falado correspondente na segunda coluna."
+                "IMPORTANTE: NÃO USE TABELAS OU MARCKDOWN DE TABELA. APRESENTE O ROTEIRO APENAS EM TEXTO CORRIDO, LINHA POR LINHA. "
+                "Formato obrigatório para cada bloco do roteiro:\n"
+                "00s - 07s -> [Texto falado aqui]\n"
+                "07s - 16s -> [Texto falado aqui]\n\n"
+                "NÃO inclua descrições de cena ou diretrizes visuais. Apenas o tempo, a seta '->' e o texto falado."
             )
 
             prompt_completo = (
@@ -613,7 +616,7 @@ with tab1:
                 f"- Benefício principal: {beneficio}\n"
                 f"- Público-alvo: {publico or 'Não especificado'}\n"
                 f"- Tom de voz: {tom}\n\n"
-                f"Entregue as três opções de gancho inicial, indique a mais forte e, em seguida, monte o roteiro completo estruturado em tabela com o tempo e o texto falado lado a lado, sem cenas."
+                f"Entregue as três opções de gancho inicial, indique a mais forte e, em seguida, monte o roteiro completo em texto simples usando o formato de setas (ex: 00s - 07s -> texto)."
             )
 
             resultado = chamar_gemini_com_loading(prompt_completo, "A inteligência artificial está criando seu roteiro...")
@@ -723,7 +726,7 @@ with tab2:
 
 
 # =========================================================
-# ABA 3: ENGENHARIA REVERSA DE HOOKS
+# ABA 3: ENGENHARIA REVERSA DE HOOKS (TEXTO DIRETO / SEM TABELA)
 # =========================================================
 with tab3:
     st.subheader("Engenharia Reversa de Vídeos em Alta")
@@ -755,24 +758,27 @@ with tab3:
             )
         else:
             system_instruction_rv = (
-                "Você é um especialista em análise de roteiros e "
-                "copywriting. Analise o gancho, a estrutura narrativa, "
-                "o ritmo e os recursos de persuasão do texto fornecido. "
-                "Crie uma versão original em tabela adaptada para o novo produto mantendo o timing ideal de 30 a 60 segundos. "
-                "IMPORTANTE: Apresente o roteiro final em formato de tabela Markdown com as colunas 'Tempo / Bloco' e 'Texto Falado', mantendo apenas a locução sem nenhuma descrição de cenas."
+                "Você é um especialista em análise de roteiros e copywriting. "
+                "Analise o gancho, a estrutura narrativa e os recursos de persuasão do texto fornecido. "
+                "Crie uma versão original em texto simples adaptada para o novo produto mantendo a duração de 30 a 60 segundos. "
+                "IMPORTANTE: NÃO USE TABELAS. APRESENTE O ROTEIRO APENAS EM TEXTO CORRIDO, LINHA POR LINHA. "
+                "Formato obrigatório para cada bloco do roteiro:\n"
+                "00s - 07s -> [Texto falado aqui]\n"
+                "07s - 16s -> [Texto falado aqui]\n\n"
+                "NÃO inclua descrições de cena. Apenas o tempo, a seta '->' e o texto falado."
             )
 
             prompt_rv_completo = (
                 f"{system_instruction_rv}\n\n"
                 f"Texto de referência:\n{video_viral_texto}\n\n"
                 f"Produto para adaptar:\n{produto_usuario_rv}\n\n"
-                f"Entregue: análise breve do gancho, três opções de novos ganchos, indique o mais forte e apresente o roteiro original formatado em tabela com tempo e texto falado, sem cenas."
+                f"Entregue: análise breve do gancho, três opções de novos ganchos, indique o mais forte e apresente o roteiro adaptado em texto simples usando o formato de setas (ex: 00s - 07s -> texto)."
             )
 
             resultado_rv = chamar_gemini_com_loading(prompt_rv_completo, "Analisando o gancho e estruturando o novo roteiro...")
 
             st.markdown("---")
-            st.subheader("🚀 Novo Roteiro em Tabela:")
+            st.subheader("🚀 Novo Roteiro em Texto:")
             st.markdown(resultado_rv)
 
             if not resultado_rv.startswith(("❌", "⚠️", "🔑", "🌐")):
